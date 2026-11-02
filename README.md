@@ -6,8 +6,6 @@ A market operations console over a fixed, synthetic dataset: a dense analytical 
 
 Built for the Front-End Engineer take-home. The AI is faked on purpose, exactly as the brief asks: the assistant streams canned answers from `fixtures.json` through the documented SSE contract. Everything the user can verify (numbers, status, evidence) is computed from `data.json`; everything generated is labelled as such.
 
-> ✍️ **Candidate's note.** Blocks marked like this one are where the brief asks for my own reasoning rather than generated text. They are written as prompts to myself and are replaced before submission.
-
 ![Executive overview](docs/screenshots/01-executive-portfolio.png)
 
 ## Contents
@@ -319,7 +317,11 @@ What actually happened:
 5. Per-view code splitting and a CI performance budget (Lighthouse CI).
 6. Screen-reader walkthrough and a colour-blind check of the diverging palette.
 
-> ✍️ **Candidate's note (with more time).** Add what you would personally prioritise and why.
+> **Candidate's note (with more time).**
+>
+> _Three priorities, in order._ First, the things that stand between this build and real users: a real store behind the alert hooks (the optimistic layer does not change), the dataset served through a query with the series paginated, and a performance budget in CI so the figures in this README become a gate rather than a snapshot. Second, the assistant aware of the current selection: the drill context prefixed to the question and the suggested questions generated from what the dashboard shows. It is the stretch goal with the highest value per hour, because it closes the loop between the two surfaces instead of leaving the user to carry context from one to the other. Third, the command palette, because once there are more than a dozen markets and products, "jump to" beats "drill to".
+>
+> _One thing I would set up differently._ I would put the dataset behind TanStack Query from day one, served by a route handler, instead of importing it into the bundle. The import was the right call for a fixed JSON and it keeps the tests deterministic, but it leaves the data path in a shape that production will not have: no loading or error state for the data itself, no cache lifetime, no way to page the series as it grows beyond 24 months and 13 markets. Starting with the query would have cost a loading skeleton and a mock handler on day one, removed 40 KB from the initial bundle, and made the later move to a real API a change of URL rather than a change of architecture. Everything downstream, the selectors and the charts, already reads from an index and would not have noticed.
 
 ## Requirements checklist
 
