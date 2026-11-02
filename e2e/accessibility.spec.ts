@@ -36,6 +36,16 @@ test.describe("accessibility (axe, WCAG 2.1 AA, serious+critical)", () => {
     expect(await audit(page)).toEqual([]);
   });
 
+  test("dark theme: executive and analyst views", async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.goto("/?region=eu&market=de&period=2026-03");
+    await expect(page.getByRole("button", { name: /^Germany,/ })).toBeVisible();
+    expect(await audit(page)).toEqual([]);
+    await page.goto("/?view=analyst&region=apac");
+    await expect(page.getByRole("grid", { name: /heat map/ })).toBeVisible();
+    expect(await audit(page)).toEqual([]);
+  });
+
   test("reduced motion is respected", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");

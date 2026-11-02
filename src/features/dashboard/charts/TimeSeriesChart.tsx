@@ -186,7 +186,10 @@ export function TimeSeriesChart({
                 strokeWidth={1.5}
                 label={{
                   value: formatPeriod(period),
-                  position: "insideTopLeft",
+                  position:
+                    (index.periodIndex.get(period) ?? 0) > index.periods.length * 0.66
+                      ? "insideTopRight"
+                      : "insideTopLeft",
                   fontSize: 10.5,
                   fontFamily: chart.mono,
                   fill: chart.signal,

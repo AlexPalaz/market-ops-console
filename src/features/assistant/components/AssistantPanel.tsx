@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { SparklesIcon, Trash2Icon } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ResolvedCitation } from "@/domain/selectors";
 import { useChatStream } from "../hooks/useChatStream";
@@ -11,9 +11,9 @@ import { Composer } from "./Composer";
 import { SuggestedQuestions } from "./SuggestedQuestions";
 
 /**
- * The conversational surface. Subscribes to chat state only; the dashboard
- * does not rerender while tokens stream. Announces state changes (not every
- * token) through one polite live region.
+ * The conversational surface: the one contained panel on the page. Subscribes
+ * to chat state only; the dashboard does not rerender while tokens stream.
+ * Announces state changes (not every token) through one polite live region.
  */
 export function AssistantPanel({
   onFollowCitation,
@@ -25,7 +25,6 @@ export function AssistantPanel({
   const { ask, stop, isGenerating } = useChatStream();
   const listRef = useRef<HTMLDivElement>(null);
 
-  // Keep the newest content in view while streaming.
   useEffect(() => {
     const el = listRef.current;
     if (el) el.scrollTop = el.scrollHeight;
@@ -48,25 +47,17 @@ export function AssistantPanel({
   return (
     <section
       aria-label="Assistant"
-      className="bg-card flex h-full min-h-0 flex-col rounded-xl border shadow-[0_1px_2px_oklch(0.2_0.02_260/0.05),0_2px_8px_-4px_oklch(0.2_0.02_260/0.08)]"
+      className="border-ink/20 bg-surface flex h-full min-h-0 flex-col rounded-lg border"
     >
-      <header className="flex items-center justify-between gap-2 border-b px-3 py-2">
-        <h2 className="flex items-center gap-2 text-sm font-semibold">
-          <span
-            aria-hidden
-            className="from-primary text-primary-foreground flex size-6 items-center justify-center rounded-md bg-gradient-to-br to-[oklch(0.6_0.18_320)]"
-          >
-            <SparklesIcon className="size-3.5" />
+      <header className="border-rule flex items-center justify-between gap-3 border-b px-4 py-3">
+        <h2 className="flex items-baseline gap-2.5">
+          <span className="text-ink inline-flex items-center gap-2 text-[15px] font-medium">
+            <span className="bg-signal size-2 rounded-sm" aria-hidden />
+            Assistant
           </span>
-          Assistant
-          <span className="text-muted-foreground rounded-full border px-1.5 py-px text-[10px] font-medium whitespace-nowrap">
-            mock
-          </span>
+          <span className="eyebrow whitespace-nowrap">mock</span>
         </h2>
-        <div className="flex items-center gap-1">
-          <span className="text-muted-foreground hidden text-[11px] xl:inline">
-            Generated answers · verified evidence
-          </span>
+        <div className="flex items-center gap-2">
           {messages.length ? (
             <Button
               variant="ghost"
@@ -75,7 +66,7 @@ export function AssistantPanel({
               disabled={isGenerating}
               aria-label="Clear conversation"
             >
-              <Trash2Icon aria-hidden />
+              <Trash2Icon aria-hidden strokeWidth={1.75} />
             </Button>
           ) : null}
         </div>
@@ -83,16 +74,14 @@ export function AssistantPanel({
 
       <div
         ref={listRef}
-        className="min-h-0 flex-1 space-y-3 overflow-y-auto px-3 py-3"
+        className="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 py-4"
         role="log"
         aria-label="Conversation"
       >
         {messages.length === 0 ? (
-          <div className="text-muted-foreground flex h-full flex-col justify-center gap-3 text-sm">
-            <p className="from-primary bg-gradient-to-r to-[oklch(0.6_0.18_320)] bg-clip-text text-2xl font-semibold tracking-tight text-transparent">
-              Ask the data.
-            </p>
-            <p>
+          <div className="flex h-full flex-col justify-end gap-4 pb-2">
+            <p className="display text-ink text-[30px] leading-none font-medium">Ask the data.</p>
+            <p className="text-ink-soft max-w-prose text-[13.5px]">
               Performance against forecast, risks, a specific market. Every answer cites the
               markets, products and periods it used, and says when the data cannot support an
               answer.
@@ -104,7 +93,7 @@ export function AssistantPanel({
             m.role === "user" ? (
               <p
                 key={m.id}
-                className="bg-primary text-primary-foreground ml-10 rounded-2xl rounded-tr-md px-3.5 py-2 text-sm shadow-sm"
+                className="bg-ink text-paper ml-10 rounded-md px-3.5 py-2 text-[13.5px]"
                 aria-label="Your question"
               >
                 {m.text}
@@ -125,7 +114,7 @@ export function AssistantPanel({
         {liveText}
       </div>
 
-      <footer className="space-y-2 border-t px-3 py-2">
+      <footer className="border-rule space-y-3 border-t px-4 py-3">
         {messages.length > 0 ? <SuggestedQuestions onPick={ask} disabled={isGenerating} /> : null}
         <Composer onSend={ask} onStop={stop} isGenerating={isGenerating} />
       </footer>

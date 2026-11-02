@@ -23,11 +23,11 @@ describe("AnswerMessage", () => {
     renderWithProviders(
       <AnswerMessage message={base} onFollowCitation={onFollow} onRetry={vi.fn()} />,
     );
-    expect(screen.getByText("Generated analysis")).toBeInTheDocument();
+    expect(screen.getByText("Generated")).toBeInTheDocument();
     expect(screen.getByText("High confidence")).toBeInTheDocument();
     const evidence = screen.getByRole("region", { name: "Evidence from the dataset" });
     expect(evidence).toHaveTextContent("Germany, March dip");
-    expect(evidence).toHaveTextContent("$1.2M revenue");
+    expect(evidence).toHaveTextContent("$1.2M");
     expect(evidence).toHaveTextContent("-31.0% YoY");
     expect(evidence).toHaveTextContent("Off track");
 

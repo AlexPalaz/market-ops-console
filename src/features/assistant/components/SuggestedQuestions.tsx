@@ -33,7 +33,7 @@ export function SuggestedQuestions({
             disabled={disabled}
             onClick={() => onPick(s.question)}
             title={s.question}
-            className={s.tone === "muted" ? "text-muted-foreground" : undefined}
+            className={s.tone === "muted" ? "text-ink-soft" : undefined}
           >
             {s.label}
           </Button>

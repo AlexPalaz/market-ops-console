@@ -6,6 +6,7 @@ import { useData } from "@/data/DataProvider";
 import { formatCurrency, formatPercent, formatPeriod } from "@/domain/format";
 import { previousPeriod, scopeKpis, statusCounts, timeSeries } from "@/domain/selectors";
 import type { Period, Scope } from "@/domain/types";
+import { useCountUp } from "@/hooks/useCountUp";
 import { cn } from "@/lib/utils";
 
 /** Signed delta in mono with a typographic arrow. Colour never carries it alone. */
@@ -40,7 +41,8 @@ function Delta({
 interface CellProps {
   index: string;
   label: string;
-  value: string;
+  /** Either a static string or a number with its formatter (animated on change). */
+  value: string | { n: number | null; format: (v: number | null) => string };
   hint?: React.ReactNode;
   trend?: readonly number[];
   tone?: string;
@@ -48,6 +50,8 @@ interface CellProps {
 }
 
 function Cell({ index, label, value, hint, trend, tone, compact }: CellProps) {
+  const animated = useCountUp(typeof value === "string" ? null : value.n);
+  const text = typeof value === "string" ? value : value.format(animated);
   return (
     <div
       role="listitem"
@@ -70,7 +74,7 @@ function Cell({ index, label, value, hint, trend, tone, compact }: CellProps) {
             tone,
           )}
         >
-          {value}
+          {text}
         </p>
         {trend ? <Sparkline values={trend} className="text-ink mb-0.5 shrink-0" /> : null}
       </div>
@@ -136,7 +140,7 @@ export function KpiTiles({
         index="01"
         compact={compact}
         label={`Revenue · ${formatPeriod(period)}`}
-        value={formatCurrency(now.revenue)}
+        value={{ n: now.revenue, format: (v) => formatCurrency(v ?? 0) }}
         trend={trend}
         hint={
           <Delta
@@ -150,7 +154,7 @@ export function KpiTiles({
         index="02"
         compact={compact}
         label="Growth, year on year"
-        value={formatPercent(now.growthPct, { signed: true })}
+        value={{ n: now.growthPct, format: (v) => formatPercent(v, { signed: true }) }}
         tone={now.growthPct !== null && now.growthPct < 0 ? "text-status-off-track" : undefined}
         hint={<Delta value={growthDelta} unit="pt" suffix="vs previous month" />}
       />
@@ -158,7 +162,7 @@ export function KpiTiles({
         index="03"
         compact={compact}
         label="Forecast attainment"
-        value={formatPercent(now.forecastAttainmentPct)}
+        value={{ n: now.forecastAttainmentPct, format: (v) => formatPercent(v) }}
         tone={
           now.forecastAttainmentPct !== null && now.forecastAttainmentPct < 95
             ? "text-status-off-track"

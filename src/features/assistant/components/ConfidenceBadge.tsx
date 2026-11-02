@@ -1,40 +1,27 @@
-import { ShieldCheckIcon, ShieldQuestionIcon, ShieldAlertIcon } from "lucide-react";
 import type { Confidence } from "@/domain/types";
 import { cn } from "@/lib/utils";
 
-const META: Record<Confidence, { label: string; Icon: typeof ShieldCheckIcon; className: string }> =
-  {
-    high: {
-      label: "High confidence",
-      Icon: ShieldCheckIcon,
-      className: "text-status-on-track border-status-on-track/40 bg-status-on-track-soft",
-    },
-    medium: {
-      label: "Medium confidence",
-      Icon: ShieldQuestionIcon,
-      className: "text-status-at-risk border-status-at-risk/40 bg-status-at-risk-soft",
-    },
-    low: {
-      label: "Low confidence",
-      Icon: ShieldAlertIcon,
-      className: "text-status-off-track border-status-off-track/40 bg-status-off-track-soft",
-    },
-  };
+const META: Record<Confidence, { label: string; dot: string }> = {
+  high: { label: "High confidence", dot: "bg-status-on-track" },
+  medium: { label: "Medium confidence", dot: "bg-status-at-risk" },
+  low: { label: "Low confidence", dot: "bg-status-off-track" },
+};
 
 /**
- * Three documented levels, shown as a labelled badge. No percentage: the
- * contract does not carry one and inventing precision would mislead.
+ * Three documented levels as an eyebrow with a coloured dot. No percentage:
+ * the contract does not carry one and inventing precision would mislead.
  */
-export function ConfidenceBadge({ confidence }: { confidence: Confidence }) {
-  const { label, Icon, className } = META[confidence];
+export function ConfidenceBadge({
+  confidence,
+  className,
+}: {
+  confidence: Confidence;
+  className?: string;
+}) {
+  const { label, dot } = META[confidence];
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium",
-        className,
-      )}
-    >
-      <Icon className="size-3.5" aria-hidden />
+    <span className={cn("eyebrow text-ink inline-flex items-center gap-1.5", className)}>
+      <span className={cn("size-1.5 rounded-full", dot)} aria-hidden />
       {label}
     </span>
   );

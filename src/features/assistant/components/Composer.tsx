@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState, type FormEvent, type KeyboardEvent } from "react";
-import { SendHorizonalIcon, SquareIcon } from "lucide-react";
+import { ArrowUpIcon, SquareIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Composer({
@@ -32,7 +32,10 @@ export function Composer({
   };
 
   return (
-    <form onSubmit={submit} className="flex items-end gap-2">
+    <form
+      onSubmit={submit}
+      className="border-rule bg-paper focus-within:border-ink/50 flex items-end gap-2 rounded-md border p-1.5 transition-colors"
+    >
       <label htmlFor={inputId} className="sr-only">
         Ask about the portfolio
       </label>
@@ -43,17 +46,27 @@ export function Composer({
         onKeyDown={onKeyDown}
         rows={2}
         placeholder="Ask about markets, regions, products or periods…"
-        className="bg-background placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/40 min-h-9 flex-1 resize-none rounded-xl border px-3.5 py-2 text-sm shadow-sm outline-none focus-visible:ring-3"
+        className="text-ink placeholder:text-ink-soft/80 min-h-9 flex-1 resize-none bg-transparent px-2 py-1.5 text-[13.5px] outline-none"
       />
       {isGenerating ? (
-        <Button type="button" variant="destructive" onClick={onStop} aria-label="Stop generating">
-          <SquareIcon aria-hidden />
-          Stop
+        <Button
+          type="button"
+          variant="outline"
+          size="icon-sm"
+          onClick={onStop}
+          aria-label="Stop generating"
+        >
+          <SquareIcon aria-hidden className="size-3" strokeWidth={2.5} />
         </Button>
       ) : (
-        <Button type="submit" disabled={!value.trim()} aria-label="Send question">
-          <SendHorizonalIcon aria-hidden />
-          Ask
+        <Button
+          type="submit"
+          variant="signal"
+          size="icon-sm"
+          disabled={!value.trim()}
+          aria-label="Send question"
+        >
+          <ArrowUpIcon aria-hidden strokeWidth={2.25} />
         </Button>
       )}
     </form>

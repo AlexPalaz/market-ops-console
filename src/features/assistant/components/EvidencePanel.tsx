@@ -1,9 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { CrosshairIcon, DatabaseIcon, TriangleAlertIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/shared/StatusBadge";
+import { StatusMark } from "@/components/shared/StatusMark";
 import { useData } from "@/data/DataProvider";
 import { formatCurrency, formatPercent, formatPeriod } from "@/domain/format";
 import { resolveCitation, scopeLabel, type ResolvedCitation } from "@/domain/selectors";
@@ -11,8 +9,8 @@ import type { Citation } from "@/domain/types";
 
 /**
  * The authoritative half of an answer: every citation resolved against
- * data.json, with the verified numbers for that scope and period. Styled as
- * data (card surface), not as AI output.
+ * data.json, with the verified numbers for that scope and period. Set as a
+ * numbered list with hairlines and mono figures: data, not prose.
  */
 export function EvidencePanel({
   citations,
@@ -28,60 +26,57 @@ export function EvidencePanel({
   );
 
   if (resolved.length === 0) {
-    return (
-      <p className="text-muted-foreground text-xs">
-        <DatabaseIcon className="mr-1 inline size-3.5 align-text-bottom" aria-hidden />
-        No dataset evidence attached to this answer.
-      </p>
-    );
+    return <p className="eyebrow mt-3">No dataset evidence attached to this answer.</p>;
   }
 
   return (
-    <section aria-label="Evidence from the dataset" className="bg-card rounded-md border">
-      <h4 className="flex items-center gap-1.5 border-b px-3 py-1.5 text-xs font-semibold">
-        <DatabaseIcon className="size-3.5" aria-hidden />
-        Evidence from the dataset
-        <span className="text-muted-foreground font-normal">· verified figures, not generated</span>
+    <section aria-label="Evidence from the dataset" className="border-ink mt-3 border-t">
+      <h4 className="eyebrow flex items-baseline justify-between gap-3 py-2">
+        <span>Evidence from the dataset</span>
+        <span className="text-ink-soft font-normal tracking-normal normal-case">
+          verified, not generated
+        </span>
       </h4>
-      <ol className="divide-y">
+      <ol>
         {resolved.map((r, i) => {
           const market = r.scope.marketId ? index.marketsById.get(r.scope.marketId) : undefined;
           return (
-            <li key={`${i}-${r.label}`} className="flex items-start gap-2 px-3 py-2 text-xs">
-              <span className="bg-muted mt-0.5 inline-flex size-4 shrink-0 items-center justify-center rounded-sm font-mono text-[10px]">
-                {i + 1}
+            <li
+              key={`${i}-${r.label}`}
+              className="border-rule flex items-start gap-3 border-t py-2.5"
+            >
+              <span className="numeral text-ink-soft mt-0.5 w-4 shrink-0 text-[11px]" aria-hidden>
+                {String(i + 1).padStart(2, "0")}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="font-medium">
+                <p className="text-ink text-[13px] font-medium">
                   {r.label}
-                  <span className="text-muted-foreground font-normal">
+                  <span className="numeral text-ink-soft font-normal">
                     {" "}
                     · {scopeLabel(index, r.scope)} · {formatPeriod(r.period)}
                   </span>
                 </p>
                 {r.unresolved.length ? (
-                  <p className="text-status-off-track mt-0.5 inline-flex items-center gap-1">
-                    <TriangleAlertIcon className="size-3.5" aria-hidden />
+                  <p className="eyebrow text-status-off-track mt-1 tracking-normal normal-case">
                     Could not match {r.unresolved.join(", ")} in the dataset.
                   </p>
                 ) : (
-                  <p className="text-muted-foreground mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                    <span>{formatCurrency(r.kpis.revenue)} revenue</span>
+                  <p className="numeral text-ink-soft mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[12px]">
+                    <span>{formatCurrency(r.kpis.revenue)}</span>
                     <span>{formatPercent(r.kpis.growthPct, { signed: true })} YoY</span>
                     <span>{formatPercent(r.kpis.forecastAttainmentPct)} of forecast</span>
-                    {market ? <StatusBadge status={market.kpis.status} /> : null}
+                    {market ? <StatusMark status={market.kpis.status} size="sm" /> : null}
                   </p>
                 )}
               </div>
-              <Button
-                variant="ghost"
-                size="xs"
+              <button
+                type="button"
                 onClick={() => onFollow(r)}
                 aria-label={`Show ${r.label} on the dashboard`}
+                className="eyebrow text-signal-ink hover:text-ink focus-visible:ring-ring shrink-0 rounded-sm px-1 py-0.5 transition-colors focus-visible:ring-2 focus-visible:outline-none"
               >
-                <CrosshairIcon aria-hidden />
-                Show
-              </Button>
+                Show →
+              </button>
             </li>
           );
         })}
