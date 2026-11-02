@@ -150,7 +150,7 @@ export function MarketsMap({
       ) : (
         <svg
           viewBox={`0 0 ${W} ${H}`}
-          className="h-auto w-full"
+          className="bg-map-ocean h-auto w-full rounded-lg"
           role="group"
           aria-labelledby={titleId}
           onMouseLeave={() => setHoverId(null)}
@@ -158,18 +158,6 @@ export function MarketsMap({
           <title
             id={titleId}
           >{`World map of markets coloured by ${effectiveMetric.label.toLowerCase()}`}</title>
-          <defs>
-            <pattern
-              id="map-nodata"
-              width="6"
-              height="6"
-              patternUnits="userSpaceOnUse"
-              patternTransform="rotate(45)"
-            >
-              <rect width="6" height="6" fill="var(--muted)" />
-              <line x1="0" y1="0" x2="0" y2="6" stroke="var(--no-data)" strokeWidth="1.5" />
-            </pattern>
-          </defs>
           {/* Non-market countries first so market strokes draw on top. */}
           {geo.features.map((f, i) => {
             const iso3 = ISO_NUMERIC_TO_ALPHA3[String(f.id).padStart(3, "0")];
@@ -179,9 +167,9 @@ export function MarketsMap({
               <path
                 key={f.id ?? `f-${i}`}
                 d={geo.path(f)}
-                fill="url(#map-nodata)"
-                stroke="var(--background)"
-                strokeWidth={0.5}
+                fill="var(--map-land)"
+                stroke="var(--map-land-stroke)"
+                strokeWidth={0.6}
                 aria-hidden
               />
             );
@@ -273,10 +261,7 @@ export function MarketsMap({
             <span className="inline-flex items-center gap-1">
               <span
                 className="inline-block size-3 rounded-sm border"
-                style={{
-                  background:
-                    "repeating-linear-gradient(45deg, var(--no-data) 0 1.5px, var(--muted) 1.5px 5px)",
-                }}
+                style={{ background: "var(--map-land)" }}
                 aria-hidden
               />
               not a market
@@ -284,7 +269,7 @@ export function MarketsMap({
           </div>
         </div>
         <div
-          className="bg-muted/40 min-h-10 min-w-[14rem] rounded-md border px-3 py-1.5"
+          className="bg-card min-h-10 min-w-[14rem] rounded-lg border px-3 py-1.5 shadow-sm"
           aria-live="polite"
         >
           {detail ? (

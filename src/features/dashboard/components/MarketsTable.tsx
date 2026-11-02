@@ -182,7 +182,10 @@ export function MarketsTable({
                   <TableRow
                     key={s.market.id}
                     data-state={selected ? "selected" : undefined}
-                    className={cn("cursor-pointer", selected && "bg-muted")}
+                    className={cn(
+                      "hover:bg-muted/60 cursor-pointer transition-colors",
+                      selected && "bg-accent/60 shadow-[inset_3px_0_0_var(--primary)]",
+                    )}
                     onClick={() => onSelectMarket(s.market.id)}
                   >
                     <TableCell className="font-medium">

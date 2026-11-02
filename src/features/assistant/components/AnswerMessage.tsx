@@ -37,7 +37,7 @@ export function AnswerMessage({
       aria-label="Assistant answer"
       aria-busy={status === "streaming"}
       className={cn(
-        "border-ai-border bg-ai-surface rounded-lg border p-3",
+        "border-ai-border bg-ai-surface rounded-2xl rounded-tl-md border p-3.5",
         status === "error" && "border-destructive/40",
       )}
     >

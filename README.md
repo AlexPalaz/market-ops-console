@@ -41,6 +41,7 @@ Built for the Front-End Engineer take-home. The AI is faked on purpose, exactly 
 - Radar comparison of regions or markets across KPIs, min-max normalised with the raw values one hover away.
 - Dense, sortable, filterable markets table and a product breakdown.
 - Two audiences: **Executive** (health, risks, movers, few numbers) and **Analyst** (every metric, every drill path, dense tables), built from the same selectors and components.
+- Light and dark themes (system default, toggle in the header); every chart colour is a token, so both themes are first-class.
 - Alert configurator: a schema-validated form that flags markets below a growth or attainment threshold, saved optimistically with rollback on failure; triggered alerts show up on the markets themselves.
 
 **Assistant**
@@ -150,6 +151,10 @@ fixtures.json ──▶ /api/chat (SSE) ──▶ streamChat (fetch + TextDecode
 - `radarData` min-max normalises per axis over the compared set and keeps the raw values and extents for the tooltip and the table.
 - `resolveCitation` maps a citation onto the dataset and reports ids it could not match rather than dropping them.
 - `evaluateAlerts` returns hits by market and by alert for a period.
+
+## Design
+
+A restrained, data-dense console with one accent. Cool off-white canvas with a faint indigo glow and white cards with a hairline ring and a soft shadow for depth; in dark mode the same tokens flip to deep slate surfaces. Indigo is the only brand colour: primary actions, selection, the actual-revenue line, the focused row. Status colours (green / amber / red) are reserved for meaning and always paired with an icon and a label. Figures are set in Geist Mono with tabular numerals so columns line up and KPIs read as instruments; labels are small uppercase eyebrows. Generated text lives on a violet-tinted surface so it can never be mistaken for a dataset figure. Every colour, radius and shadow is a CSS variable in `globals.css`; nothing is hard-coded in components.
 
 ## Technical decisions
 

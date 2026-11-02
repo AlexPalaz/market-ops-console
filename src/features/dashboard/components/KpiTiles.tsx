@@ -23,9 +23,17 @@ function Delta({ value, unit }: { value: number | null; unit: "pt" | "pct" }) {
     unit === "pt"
       ? `${value > 0 ? "+" : ""}${value.toFixed(1)} pt`
       : formatPercent(value, { signed: true });
+  const bg =
+    value > 0 ? "bg-status-on-track-soft" : value < 0 ? "bg-status-off-track-soft" : "bg-muted";
   return (
-    <span className={cn("inline-flex items-center gap-0.5 text-xs font-medium", tone)}>
-      <Icon className="size-3.5" aria-hidden />
+    <span
+      className={cn(
+        "inline-flex items-center gap-0.5 rounded-full px-1.5 py-px text-xs font-medium",
+        tone,
+        bg,
+      )}
+    >
+      <Icon className="size-3" aria-hidden />
       {text}
     </span>
   );
@@ -42,15 +50,27 @@ interface TileProps {
 
 function Tile({ label, value, hint, trend, tone, compact }: TileProps) {
   return (
-    <Card className={cn("min-w-0 gap-1 px-4", compact ? "py-2.5" : "py-3")}>
+    <Card className={cn("min-w-0 gap-1.5 px-4", compact ? "py-3" : "py-4")}>
       <div className="flex items-start justify-between gap-2">
-        <p className="text-muted-foreground text-xs font-medium">{label}</p>
-        {trend ? <Sparkline values={trend} className="text-muted-foreground/70" /> : null}
+        <p className="eyebrow">{label}</p>
+        {trend ? (
+          <Sparkline
+            values={trend}
+            id={label.replace(/\W+/g, "-")}
+            className="text-primary -mt-1"
+          />
+        ) : null}
       </div>
-      <p className={cn("font-semibold tracking-tight", compact ? "text-xl" : "text-2xl", tone)}>
+      <p
+        className={cn(
+          "numeral font-semibold",
+          compact ? "text-2xl" : "text-[1.75rem] leading-none",
+          tone,
+        )}
+      >
         {value}
       </p>
-      {hint ? <div className="text-muted-foreground text-xs">{hint}</div> : null}
+      {hint ? <div className="text-muted-foreground mt-0.5 text-xs">{hint}</div> : null}
     </Card>
   );
 }

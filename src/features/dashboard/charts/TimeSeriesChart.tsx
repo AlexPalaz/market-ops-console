@@ -190,6 +190,7 @@ export function TimeSeriesChart({
                 dot={false}
                 activeDot={{ r: 4 }}
                 isAnimationActive={!reduceMotion}
+                animationDuration={700}
               />
             ))}
             {anomalies.map((a) => {

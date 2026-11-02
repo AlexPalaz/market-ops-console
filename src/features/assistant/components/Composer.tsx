@@ -43,7 +43,7 @@ export function Composer({
         onKeyDown={onKeyDown}
         rows={2}
         placeholder="Ask about markets, regions, products or periods…"
-        className="bg-background placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 min-h-9 flex-1 resize-none rounded-lg border px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-3"
+        className="bg-background placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/40 min-h-9 flex-1 resize-none rounded-xl border px-3.5 py-2 text-sm shadow-sm outline-none focus-visible:ring-3"
       />
       {isGenerating ? (
         <Button type="button" variant="destructive" onClick={onStop} aria-label="Stop generating">

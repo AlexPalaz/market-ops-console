@@ -201,6 +201,7 @@ export function RadarCompareChart({
                 strokeWidth={2}
                 dot={{ r: 3 }}
                 isAnimationActive={!reduceMotion}
+                animationDuration={700}
               />
             ))}
           </RadarChart>

@@ -78,7 +78,10 @@ export function ProductBreakdown({
               return (
                 <TableRow
                   key={product.id}
-                  className={cn("cursor-pointer", selected && "bg-muted")}
+                  className={cn(
+                    "hover:bg-muted/60 cursor-pointer transition-colors",
+                    selected && "bg-accent/60 shadow-[inset_3px_0_0_var(--primary)]",
+                  )}
                   onClick={() => onSelectProduct(selected ? null : product.id)}
                 >
                   <TableCell className="font-medium">
@@ -96,9 +99,9 @@ export function ProductBreakdown({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <div className="bg-muted h-2 flex-1 rounded-sm" aria-hidden>
+                      <div className="bg-muted h-2 flex-1 rounded-full" aria-hidden>
                         <div
-                          className="bg-series-actual h-2 rounded-sm"
+                          className="from-primary h-2 rounded-full bg-gradient-to-r to-[oklch(0.62_0.15_220)]"
                           style={{ width: `${(kpis.revenue / max) * 100}%` }}
                         />
                       </div>

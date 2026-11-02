@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { MessageSquareTextIcon, Trash2Icon } from "lucide-react";
+import { SparklesIcon, Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ResolvedCitation } from "@/domain/selectors";
 import { useChatStream } from "../hooks/useChatStream";
@@ -48,16 +48,24 @@ export function AssistantPanel({
   return (
     <section
       aria-label="Assistant"
-      className="bg-card flex h-full min-h-0 flex-col rounded-xl border"
+      className="bg-card flex h-full min-h-0 flex-col rounded-xl border shadow-[0_1px_2px_oklch(0.2_0.02_260/0.05),0_2px_8px_-4px_oklch(0.2_0.02_260/0.08)]"
     >
       <header className="flex items-center justify-between gap-2 border-b px-3 py-2">
-        <h2 className="flex items-center gap-1.5 text-sm font-semibold">
-          <MessageSquareTextIcon className="size-4" aria-hidden />
+        <h2 className="flex items-center gap-2 text-sm font-semibold">
+          <span
+            aria-hidden
+            className="from-primary text-primary-foreground flex size-6 items-center justify-center rounded-md bg-gradient-to-br to-[oklch(0.6_0.18_320)]"
+          >
+            <SparklesIcon className="size-3.5" />
+          </span>
           Assistant
+          <span className="text-muted-foreground rounded-full border px-1.5 py-px text-[10px] font-medium whitespace-nowrap">
+            mock
+          </span>
         </h2>
         <div className="flex items-center gap-1">
-          <span className="text-muted-foreground text-xs">
-            Answers are generated; evidence is from the dataset
+          <span className="text-muted-foreground hidden text-[11px] xl:inline">
+            Generated answers · verified evidence
           </span>
           {messages.length ? (
             <Button
@@ -81,10 +89,13 @@ export function AssistantPanel({
       >
         {messages.length === 0 ? (
           <div className="text-muted-foreground flex h-full flex-col justify-center gap-3 text-sm">
+            <p className="from-primary bg-gradient-to-r to-[oklch(0.6_0.18_320)] bg-clip-text text-2xl font-semibold tracking-tight text-transparent">
+              Ask the data.
+            </p>
             <p>
-              Ask about performance against forecast, risks, or a specific market. Every answer
-              cites the markets, products and periods it used, and says when the data cannot support
-              an answer.
+              Performance against forecast, risks, a specific market. Every answer cites the
+              markets, products and periods it used, and says when the data cannot support an
+              answer.
             </p>
             <SuggestedQuestions onPick={ask} disabled={isGenerating} />
           </div>
@@ -93,7 +104,7 @@ export function AssistantPanel({
             m.role === "user" ? (
               <p
                 key={m.id}
-                className="bg-muted ml-8 rounded-lg px-3 py-2 text-sm"
+                className="bg-primary text-primary-foreground ml-10 rounded-2xl rounded-tr-md px-3.5 py-2 text-sm shadow-sm"
                 aria-label="Your question"
               >
                 {m.text}

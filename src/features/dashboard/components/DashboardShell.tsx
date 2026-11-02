@@ -1,9 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { MessageSquareTextIcon, PanelRightCloseIcon, PanelRightOpenIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import {
+  ActivityIcon,
+  MessageSquareTextIcon,
+  PanelRightCloseIcon,
+  SparklesIcon,
+} from "lucide-react";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
+import { StatusBadge } from "@/components/shared/StatusBadge";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
+import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useData } from "@/data/DataProvider";
 import { formatPeriodLong } from "@/domain/format";
@@ -17,7 +24,7 @@ import { PeriodSelect } from "./PeriodSelect";
 import { ScopeBreadcrumbs } from "./ScopeBreadcrumbs";
 import { ViewToggle } from "./ViewToggle";
 
-const HEADER_H = 49;
+const HEADER_H = 52;
 
 /**
  * Application shell: header with audience view and period, the drill path,
@@ -29,6 +36,9 @@ export function DashboardShell() {
   const { selection, goTo, setPeriod, setView, focus } = api;
   const [panelOpen, setPanelOpen] = useState(true);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const selectedMarket = selection.scope.marketId
+    ? index.marketsById.get(selection.scope.marketId)
+    : undefined;
 
   const followCitation = (c: ResolvedCitation) => {
     focus(c.scope, c.period);
@@ -39,27 +49,39 @@ export function DashboardShell() {
   return (
     <div className="flex min-h-screen flex-col">
       <header
-        className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-20 border-b backdrop-blur"
+        className="bg-background/90 supports-[backdrop-filter]:bg-background/75 sticky top-0 z-20 border-b backdrop-blur"
         style={{ minHeight: HEADER_H }}
       >
-        <div className="mx-auto flex min-h-[inherit] w-full max-w-[1800px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2">
-          <div className="flex min-w-0 items-baseline gap-2">
+        <div
+          aria-hidden
+          className="from-primary h-0.5 w-full bg-gradient-to-r via-[oklch(0.65_0.15_200)] to-[oklch(0.7_0.17_320)]"
+        />
+        <div className="mx-auto flex min-h-[inherit] w-full max-w-[1800px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-1.5">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <span
+              aria-hidden
+              className="bg-primary text-primary-foreground flex size-7 items-center justify-center rounded-lg shadow-sm"
+            >
+              <ActivityIcon className="size-4" />
+            </span>
             <span className="text-sm font-semibold tracking-tight">Market Ops Console</span>
-            <span className="text-muted-foreground hidden text-xs sm:inline">
+            <span className="bg-card text-muted-foreground hidden items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] sm:inline-flex">
+              <span className="bg-status-on-track size-1.5 rounded-full" aria-hidden />
               Data as of {formatPeriodLong(index.latestPeriod)}
             </span>
           </div>
           <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto">
             <PeriodSelect value={selection.period} onChange={setPeriod} />
             <ViewToggle value={selection.view} onChange={setView} />
+            <ThemeToggle />
             <Button
-              variant="outline"
+              variant={panelOpen ? "outline" : "default"}
               size="sm"
               className="hidden lg:inline-flex"
               aria-pressed={panelOpen}
               onClick={() => setPanelOpen((v) => !v)}
             >
-              {panelOpen ? <PanelRightCloseIcon aria-hidden /> : <PanelRightOpenIcon aria-hidden />}
+              {panelOpen ? <PanelRightCloseIcon aria-hidden /> : <SparklesIcon aria-hidden />}
               Assistant
             </Button>
             <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -92,14 +114,28 @@ export function DashboardShell() {
           <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
             <div>
               <ScopeBreadcrumbs scope={selection.scope} onNavigate={goTo} />
-              <h1 className="mt-1 text-xl font-semibold tracking-tight">
-                {scopeLabel(index, selection.scope)}
-              </h1>
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                <h1 className="text-2xl font-semibold tracking-tight">
+                  {scopeLabel(index, selection.scope)}
+                </h1>
+                {selectedMarket ? (
+                  <>
+                    <span className="numeral bg-card text-muted-foreground rounded-md border px-1.5 py-0.5 text-[11px]">
+                      {selectedMarket.iso3}
+                    </span>
+                    <StatusBadge status={selectedMarket.kpis.status} />
+                  </>
+                ) : null}
+              </div>
             </div>
-            <p className="text-muted-foreground text-xs">
-              {selection.view === "exec" ? "Executive overview" : "Analyst deep-dive"} ·{" "}
-              {formatPeriodLong(selection.period)}
-            </p>
+            <div className="flex items-center gap-1.5 text-xs">
+              <span className="bg-card text-muted-foreground rounded-full border px-2 py-0.5">
+                {selection.view === "exec" ? "Executive overview" : "Analyst deep-dive"}
+              </span>
+              <span className="numeral bg-card text-muted-foreground rounded-full border px-2 py-0.5">
+                {formatPeriodLong(selection.period)}
+              </span>
+            </div>
           </div>
 
           <ErrorBoundary label="The dashboard">
