@@ -4,12 +4,17 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ------------------------------------------------------------------ */
+/* Theme mapping (Tailwind utilities read these)                        */
+/* ------------------------------------------------------------------ */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-display);
+  --font-display: var(--font-display);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -39,176 +44,16 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-}
 
-:root {
-  --background: oklch(0.977 0.005 255);
-  --foreground: oklch(0.21 0.02 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.21 0.02 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.21 0.02 260);
-  --primary: oklch(0.47 0.2 275);
-  --primary-foreground: oklch(0.985 0.005 275);
-  --secondary: oklch(0.955 0.008 255);
-  --secondary-foreground: oklch(0.25 0.02 260);
-  --muted: oklch(0.955 0.008 255);
-  --muted-foreground: oklch(0.5 0.02 260);
-  --accent: oklch(0.94 0.02 275);
-  --accent-foreground: oklch(0.3 0.08 275);
-  --destructive: oklch(0.55 0.22 27);
-  --border: oklch(0.9 0.01 255);
-  --input: oklch(0.9 0.01 255);
-  --ring: oklch(0.6 0.16 275);
-  --chart-1: oklch(0.47 0.2 275);
-  --chart-2: oklch(0.65 0.17 40);
-  --chart-3: oklch(0.6 0.15 150);
-  --chart-4: oklch(0.55 0.2 320);
-  --chart-5: oklch(0.7 0.14 90);
-  --radius: 0.75rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.16 0.015 260);
-  --foreground: oklch(0.95 0.01 260);
-  --card: oklch(0.205 0.015 260);
-  --card-foreground: oklch(0.95 0.01 260);
-  --popover: oklch(0.22 0.015 260);
-  --popover-foreground: oklch(0.95 0.01 260);
-  --primary: oklch(0.74 0.15 275);
-  --primary-foreground: oklch(0.16 0.03 275);
-  --secondary: oklch(0.27 0.015 260);
-  --secondary-foreground: oklch(0.95 0.01 260);
-  --muted: oklch(0.26 0.015 260);
-  --muted-foreground: oklch(0.72 0.02 260);
-  --accent: oklch(0.3 0.04 275);
-  --accent-foreground: oklch(0.9 0.05 275);
-  --destructive: oklch(0.7 0.19 22);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.62 0.15 275);
-  --chart-1: oklch(0.74 0.15 275);
-  --chart-2: oklch(0.72 0.16 40);
-  --chart-3: oklch(0.72 0.14 150);
-  --chart-4: oklch(0.7 0.17 320);
-  --chart-5: oklch(0.8 0.13 90);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    cursor: pointer;
-  }
-  html {
-    @apply font-sans;
-  }
-}
-/* ------------------------------------------------------------------ */
-/* Market Ops Console design tokens                                    */
-/* ------------------------------------------------------------------ */
-
-:root {
-  /* Semantic status (paired with icons + text everywhere; never colour alone) */
-  --status-on-track: oklch(0.45 0.14 150);
-  --status-on-track-soft: oklch(0.96 0.04 150);
-  --status-at-risk: oklch(0.47 0.13 65);
-  --status-at-risk-soft: oklch(0.97 0.05 80);
-  --status-off-track: oklch(0.48 0.19 25);
-  --status-off-track-soft: oklch(0.96 0.04 20);
-
-  /* Time-series lines */
-  --series-actual: oklch(0.47 0.2 275);
-  --series-forecast: oklch(0.6 0.02 260);
-  --series-prior: oklch(0.72 0.12 50);
-
-  /* Categorical palette (products, compared entities) */
-  --cat-1: oklch(0.47 0.2 275);
-  --cat-2: oklch(0.65 0.17 40);
-  --cat-3: oklch(0.6 0.15 150);
-  --cat-4: oklch(0.55 0.2 320);
-  --cat-5: oklch(0.7 0.14 90);
-  --cat-6: oklch(0.55 0.12 200);
-
-  /* Diverging scale endpoints for the heat map / map (negative → neutral → positive) */
-  --div-neg: oklch(0.55 0.2 25);
-  --div-mid: oklch(0.97 0.005 260);
-  --div-pos: oklch(0.5 0.16 160);
-
-  /* Sequential scale for the map when the KPI is one-directional (revenue) */
-  --seq-low: oklch(0.94 0.03 260);
-  --seq-high: oklch(0.42 0.2 275);
-
-  /* Missing-data pattern colour */
-  --no-data: oklch(0.85 0.005 255);
-  /* Map: land that is not a market, and the ocean behind it */
-  --map-land: oklch(0.925 0.006 255);
-  --map-land-stroke: oklch(1 0 0);
-  --map-ocean: oklch(0.985 0.004 255);
-
-  /* AI-generated content surface: visibly distinct from authoritative data */
-  --ai-surface: oklch(0.98 0.015 300);
-  --ai-border: oklch(0.85 0.06 300);
-  --ai-foreground: oklch(0.4 0.12 300);
-
-  /* Authoritative data surface */
-  --data-surface: var(--card);
-  --data-border: var(--border);
-}
-
-.dark {
-  --status-on-track: oklch(0.72 0.16 150);
-  --status-on-track-soft: oklch(0.3 0.05 150);
-  --status-at-risk: oklch(0.8 0.15 75);
-  --status-at-risk-soft: oklch(0.32 0.06 75);
-  --status-off-track: oklch(0.7 0.19 25);
-  --status-off-track-soft: oklch(0.32 0.07 25);
-  --series-actual: oklch(0.76 0.14 275);
-  --series-forecast: oklch(0.7 0.02 260);
-  --series-prior: oklch(0.78 0.12 50);
-  --div-neg: oklch(0.68 0.19 25);
-  --div-mid: oklch(0.25 0.005 260);
-  --div-pos: oklch(0.72 0.15 160);
-  --seq-low: oklch(0.3 0.03 260);
-  --seq-high: oklch(0.8 0.14 275);
-  --no-data: oklch(0.38 0.01 260);
-  --map-land: oklch(0.27 0.012 260);
-  --map-land-stroke: oklch(0.2 0.015 260);
-  --map-ocean: oklch(0.18 0.015 260);
-  --ai-surface: oklch(0.25 0.03 300);
-  --ai-border: oklch(0.4 0.08 300);
-  --ai-foreground: oklch(0.85 0.08 300);
-}
-
-@theme inline {
+  /* Editorial tokens */
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-rule: var(--rule);
+  --color-signal: var(--signal);
+  --color-signal-ink: var(--signal-ink);
+  --color-signal-soft: var(--signal-soft);
   --color-status-on-track: var(--status-on-track);
   --color-status-on-track-soft: var(--status-on-track-soft);
   --color-status-at-risk: var(--status-at-risk);
@@ -230,10 +75,201 @@
   --color-no-data: var(--no-data);
   --color-map-land: var(--map-land);
   --color-map-ocean: var(--map-ocean);
+
+  /* Radii: controls 4, surfaces 6. Nothing bigger. */
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 10px;
+  --radius-3xl: 12px;
+  --radius-4xl: 16px;
 }
 
+/* ------------------------------------------------------------------ */
+/* Palette: paper, ink, one warm signal                                 */
+/* ------------------------------------------------------------------ */
+
+:root {
+  --paper: oklch(0.975 0.006 85);
+  --surface: oklch(0.99 0.004 85);
+  --ink: oklch(0.2 0.015 60);
+  --ink-soft: oklch(0.47 0.015 60);
+  --rule: oklch(0.86 0.01 80);
+  --signal: oklch(0.56 0.17 45);
+  --signal-ink: oklch(0.48 0.16 45);
+  --signal-soft: oklch(0.95 0.03 60);
+
+  /* shadcn semantic names, mapped onto the editorial palette */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: oklch(0.94 0.008 85);
+  --secondary-foreground: var(--ink);
+  --muted: oklch(0.94 0.008 85);
+  --muted-foreground: var(--ink-soft);
+  --accent: oklch(0.92 0.01 80);
+  --accent-foreground: var(--ink);
+  --destructive: oklch(0.5 0.19 25);
+  --border: var(--rule);
+  --input: var(--rule);
+  --ring: var(--signal);
+  --chart-1: var(--cat-1);
+  --chart-2: var(--cat-2);
+  --chart-3: var(--cat-3);
+  --chart-4: var(--cat-4);
+  --chart-5: var(--cat-5);
+  --radius: 6px;
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--ink);
+  --sidebar-primary-foreground: var(--paper);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--rule);
+  --sidebar-ring: var(--signal);
+
+  /* Semantic status: meaning only, always paired with text */
+  --status-on-track: oklch(0.45 0.13 150);
+  --status-on-track-soft: oklch(0.95 0.035 150);
+  --status-at-risk: oklch(0.5 0.13 70);
+  --status-at-risk-soft: oklch(0.96 0.045 80);
+  --status-off-track: oklch(0.5 0.19 25);
+  --status-off-track-soft: oklch(0.955 0.035 25);
+
+  /* Time series: actual is the signal, the rest is ink at reduced strength */
+  --series-actual: var(--signal);
+  --series-forecast: oklch(0.2 0.015 60 / 0.55);
+  --series-prior: oklch(0.2 0.015 60 / 0.35);
+
+  /* Categorical (radar, products): six harmonised hues */
+  --cat-1: oklch(0.56 0.17 45);
+  --cat-2: oklch(0.5 0.1 200);
+  --cat-3: oklch(0.45 0.12 330);
+  --cat-4: oklch(0.52 0.1 120);
+  --cat-5: oklch(0.45 0.04 260);
+  --cat-6: oklch(0.65 0.13 85);
+
+  /* Diverging: desaturated status reds and greens around paper */
+  --div-neg: oklch(0.55 0.16 25);
+  --div-mid: oklch(0.965 0.006 85);
+  --div-pos: oklch(0.5 0.12 150);
+
+  /* Sequential (map): paper to ink */
+  --seq-low: oklch(0.93 0.008 85);
+  --seq-high: oklch(0.28 0.02 60);
+
+  /* Map surfaces */
+  --no-data: oklch(0.85 0.008 85);
+  --map-land: oklch(0.915 0.008 85);
+  --map-land-stroke: oklch(0.975 0.006 85);
+  --map-ocean: oklch(0.975 0.006 85);
+
+  /* Generated content: paper with a signal rule, never a tinted box */
+  --ai-surface: var(--surface);
+  --ai-border: var(--signal);
+  --ai-foreground: var(--signal-ink);
+}
+
+.dark {
+  --paper: oklch(0.17 0.012 60);
+  --surface: oklch(0.21 0.012 60);
+  --ink: oklch(0.94 0.01 80);
+  --ink-soft: oklch(0.72 0.015 70);
+  --rule: oklch(1 0 0 / 12%);
+  --signal: oklch(0.74 0.15 45);
+  --signal-ink: oklch(0.8 0.13 45);
+  --signal-soft: oklch(0.3 0.05 45);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: oklch(0.255 0.012 60);
+  --secondary-foreground: var(--ink);
+  --muted: oklch(0.255 0.012 60);
+  --muted-foreground: var(--ink-soft);
+  --accent: oklch(0.29 0.014 60);
+  --accent-foreground: var(--ink);
+  --destructive: oklch(0.7 0.18 25);
+  --border: var(--rule);
+  --input: oklch(1 0 0 / 16%);
+  --ring: var(--signal);
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--ink);
+  --sidebar-primary-foreground: var(--paper);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--rule);
+  --sidebar-ring: var(--signal);
+
+  --status-on-track: oklch(0.74 0.14 150);
+  --status-on-track-soft: oklch(0.3 0.05 150);
+  --status-at-risk: oklch(0.8 0.13 80);
+  --status-at-risk-soft: oklch(0.32 0.06 75);
+  --status-off-track: oklch(0.72 0.17 25);
+  --status-off-track-soft: oklch(0.32 0.07 25);
+
+  --series-forecast: oklch(0.94 0.01 80 / 0.55);
+  --series-prior: oklch(0.94 0.01 80 / 0.35);
+
+  --cat-1: oklch(0.74 0.15 45);
+  --cat-2: oklch(0.72 0.1 200);
+  --cat-3: oklch(0.72 0.12 330);
+  --cat-4: oklch(0.74 0.12 120);
+  --cat-5: oklch(0.72 0.04 260);
+  --cat-6: oklch(0.8 0.13 85);
+
+  --div-neg: oklch(0.68 0.17 25);
+  --div-mid: oklch(0.24 0.012 60);
+  --div-pos: oklch(0.7 0.13 150);
+
+  --seq-low: oklch(0.27 0.012 60);
+  --seq-high: oklch(0.9 0.02 80);
+
+  --no-data: oklch(0.36 0.01 60);
+  --map-land: oklch(0.255 0.012 60);
+  --map-land-stroke: oklch(0.17 0.012 60);
+  --map-ocean: oklch(0.17 0.012 60);
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                 */
+/* ------------------------------------------------------------------ */
+
 @layer base {
-  /* Reduced motion: no transitions or animations anywhere, charts included. */
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-size: 13.5px;
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  ::selection {
+    background: var(--signal-soft);
+  }
+
+  /* Reduced motion: nothing moves, charts included. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -244,47 +280,47 @@
       scroll-behavior: auto !important;
     }
   }
-
-  /* Tabular figures for every number in the console. */
-  body {
-    font-variant-numeric: tabular-nums;
-    background-color: var(--background);
-    background-image: radial-gradient(
-      70% 45% at 50% -15%,
-      oklch(0.47 0.2 275 / 0.09),
-      transparent 70%
-    );
-    background-repeat: no-repeat;
-  }
-  .dark body {
-    background-image: radial-gradient(
-      70% 45% at 50% -15%,
-      oklch(0.6 0.18 275 / 0.16),
-      transparent 70%
-    );
-  }
-
-  /* Cards: a hairline ring plus a soft two-layer shadow for depth on the canvas. */
-  [data-slot="card"] {
-    box-shadow:
-      0 1px 2px oklch(0.2 0.02 260 / 0.05),
-      0 2px 8px -4px oklch(0.2 0.02 260 / 0.08);
-  }
-  .dark [data-slot="card"] {
-    box-shadow: 0 1px 0 oklch(1 0 0 / 0.04) inset;
-  }
 }
 
+/* ------------------------------------------------------------------ */
+/* Utilities                                                            */
+/* ------------------------------------------------------------------ */
+
+/* Small uppercase label: section numbers, column headers, meta. */
 @utility eyebrow {
-  font-size: 0.6875rem;
+  font-family: var(--font-sans);
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--muted-foreground);
+  color: var(--ink-soft);
 }
 
+/* Data figures: mono, tabular. */
 @utility numeral {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+}
+
+/* Hero figures and titles: Fraunces with tabular lining figures. */
+@utility display {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum", "lnum";
+  letter-spacing: -0.015em;
+}
+
+/* Hairline rules. */
+@utility rule-t {
+  border-top: 1px solid var(--rule);
+}
+@utility rule-b {
+  border-bottom: 1px solid var(--rule);
+}
+@utility rule-l {
+  border-left: 1px solid var(--rule);
+}
+@utility rule-strong-t {
+  border-top: 1px solid var(--ink);
 }

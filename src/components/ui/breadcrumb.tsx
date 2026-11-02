@@ -1,55 +1,52 @@
 import * as React from "react";
 import { cn } from "cn";
 import { Slot } from "radix-ui";
-import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
+import { MoreHorizontalIcon } from "lucide-react";
 
+/** Mono small caps with a typographic › separator. */
 function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav aria-label="breadcrumb" data-slot="breadcrumb" className={cn(className)} {...props} />
   );
 }
-
 function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
   return (
     <ol
       data-slot="breadcrumb-list"
       className={cn(
-        "text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm wrap-break-word",
+        "eyebrow flex flex-wrap items-center gap-2 font-mono font-medium wrap-break-word",
         className,
       )}
       {...props}
     />
   );
 }
-
 function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
       data-slot="breadcrumb-item"
-      className={cn("inline-flex items-center gap-1", className)}
+      className={cn("inline-flex items-center gap-2", className)}
       {...props}
     />
   );
 }
-
 function BreadcrumbLink({
   asChild,
   className,
   ...props
-}: React.ComponentProps<"a"> & {
-  asChild?: boolean;
-}) {
+}: React.ComponentProps<"a"> & { asChild?: boolean }) {
   const Comp = asChild ? Slot.Root : "a";
-
   return (
     <Comp
       data-slot="breadcrumb-link"
-      className={cn("hover:text-foreground transition-colors", className)}
+      className={cn(
+        "hover:text-ink focus-visible:ring-ring rounded-sm transition-colors focus-visible:ring-2 focus-visible:outline-none",
+        className,
+      )}
       {...props}
     />
   );
 }
-
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -57,26 +54,24 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
       role="link"
       aria-disabled="true"
       aria-current="page"
-      className={cn("text-foreground font-normal", className)}
+      className={cn("text-ink", className)}
       {...props}
     />
   );
 }
-
 function BreadcrumbSeparator({ children, className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      className={cn("[&>svg]:size-3.5", className)}
+      className={cn("text-ink-soft/70", className)}
       {...props}
     >
-      {children ?? <ChevronRightIcon />}
+      {children ?? "›"}
     </li>
   );
 }
-
 function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span

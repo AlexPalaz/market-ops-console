@@ -1,10 +1,9 @@
-/** Tiny inline trend line with a soft area fill. Decorative: the figure next to it carries the value. */
+/** Tiny inline trend line in ink. Decorative: the figure next to it carries the value. */
 export function Sparkline({
   values,
-  width = 96,
-  height = 28,
+  width = 88,
+  height = 24,
   className,
-  id = "spark",
 }: {
   values: readonly number[];
   width?: number;
@@ -23,8 +22,7 @@ export function Sparkline({
   const line = pts
     .map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`)
     .join(" ");
-  const area = `${line} L${width},${height} L0,${height} Z`;
-  const gradId = `${id}-grad`;
+  const last = pts[pts.length - 1]!;
   return (
     <svg
       width={width}
@@ -33,22 +31,15 @@ export function Sparkline({
       aria-hidden
       className={className}
     >
-      <defs>
-        <linearGradient id={gradId} x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0" stopColor="currentColor" stopOpacity={0.22} />
-          <stop offset="1" stopColor="currentColor" stopOpacity={0} />
-        </linearGradient>
-      </defs>
-      <path d={area} fill={`url(#${gradId})`} />
       <path
         d={line}
         fill="none"
         stroke="currentColor"
-        strokeWidth={1.5}
+        strokeWidth={1.25}
         strokeLinejoin="round"
         strokeLinecap="round"
       />
-      <circle cx={pts[pts.length - 1]![0]} cy={pts[pts.length - 1]![1]} r={2} fill="currentColor" />
+      <circle cx={last[0]} cy={last[1]} r={2} fill="var(--signal)" />
     </svg>
   );
 }
