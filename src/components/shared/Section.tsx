@@ -75,7 +75,7 @@ export function Section({
               </span>
             ) : null}
             {title}
-          </h3>
+          </h2>
           {description ? (
             <p id={descId} className="text-ink-soft mt-1 max-w-prose text-[12.5px]">
               {description}
