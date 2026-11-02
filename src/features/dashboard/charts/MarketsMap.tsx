@@ -79,12 +79,15 @@ export function MarketsMap({
   metric,
   onMetricChange,
   onSelectMarket,
+  index: sectionIndex,
 }: {
   scope: Scope;
   period: Period;
   metric: MetricKey;
   onMetricChange: (m: MetricKey) => void;
   onSelectMarket: (id: string) => void;
+  /** Section number shown as an eyebrow. */
+  index?: string;
 }) {
   const index = useData();
   const geo = useWorldGeometry();
@@ -131,6 +134,7 @@ export function MarketsMap({
 
   return (
     <ChartFrame
+      index={sectionIndex}
       title="Markets map"
       description={`Countries coloured by ${effectiveMetric.label.toLowerCase()} for ${formatPeriod(period)}. Click a market to drill in.`}
       summary={summary}

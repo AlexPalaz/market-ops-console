@@ -1,8 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { ArrowDownRightIcon, ArrowUpRightIcon, MinusIcon } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Sparkline } from "@/components/shared/Sparkline";
 import { useData } from "@/data/DataProvider";
 import { formatCurrency, formatPercent, formatPeriod } from "@/domain/format";
@@ -10,36 +8,37 @@ import { previousPeriod, scopeKpis, statusCounts, timeSeries } from "@/domain/se
 import type { Period, Scope } from "@/domain/types";
 import { cn } from "@/lib/utils";
 
-function Delta({ value, unit }: { value: number | null; unit: "pt" | "pct" }) {
-  if (value === null) return <span className="text-muted-foreground">—</span>;
-  const Icon = value > 0 ? ArrowUpRightIcon : value < 0 ? ArrowDownRightIcon : MinusIcon;
+/** Signed delta in mono with a typographic arrow. Colour never carries it alone. */
+function Delta({
+  value,
+  unit,
+  suffix,
+}: {
+  value: number | null;
+  unit: "pt" | "pct";
+  suffix?: string;
+}) {
+  if (value === null) return <span className="text-ink-soft">—</span>;
+  const glyph = value > 0 ? "↗" : value < 0 ? "↘" : "→";
   const tone =
-    value > 0
-      ? "text-status-on-track"
-      : value < 0
-        ? "text-status-off-track"
-        : "text-muted-foreground";
+    value > 0 ? "text-status-on-track" : value < 0 ? "text-status-off-track" : "text-ink-soft";
   const text =
     unit === "pt"
       ? `${value > 0 ? "+" : ""}${value.toFixed(1)} pt`
       : formatPercent(value, { signed: true });
-  const bg =
-    value > 0 ? "bg-status-on-track-soft" : value < 0 ? "bg-status-off-track-soft" : "bg-muted";
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-0.5 rounded-full px-1.5 py-px text-xs font-medium",
-        tone,
-        bg,
-      )}
-    >
-      <Icon className="size-3" aria-hidden />
-      {text}
+    <span className="numeral inline-flex items-baseline gap-1.5 text-[12.5px]">
+      <span className={cn("font-medium", tone)}>
+        <span aria-hidden>{glyph} </span>
+        {text}
+      </span>
+      {suffix ? <span className="text-ink-soft">{suffix}</span> : null}
     </span>
   );
 }
 
-interface TileProps {
+interface CellProps {
+  index: string;
   label: string;
   value: string;
   hint?: React.ReactNode;
@@ -48,35 +47,40 @@ interface TileProps {
   compact?: boolean;
 }
 
-function Tile({ label, value, hint, trend, tone, compact }: TileProps) {
+function Cell({ index, label, value, hint, trend, tone, compact }: CellProps) {
   return (
-    <Card className={cn("min-w-0 gap-1.5 px-4", compact ? "py-3" : "py-4")}>
-      <div className="flex items-start justify-between gap-2">
-        <p className="eyebrow">{label}</p>
-        {trend ? (
-          <Sparkline
-            values={trend}
-            id={label.replace(/\W+/g, "-")}
-            className="text-primary -mt-1"
-          />
-        ) : null}
-      </div>
-      <p
-        className={cn(
-          "numeral font-semibold",
-          compact ? "text-2xl" : "text-[1.75rem] leading-none",
-          tone,
-        )}
-      >
-        {value}
+    <div
+      role="listitem"
+      className={cn(
+        "xl:border-rule flex min-w-0 flex-col gap-2 py-4 xl:border-l xl:pl-6 xl:first:border-l-0 xl:first:pl-0",
+        compact && "py-3",
+      )}
+    >
+      <p className="eyebrow flex items-baseline gap-2">
+        <span className="numeral" aria-hidden>
+          {index}
+        </span>
+        {label}
       </p>
-      {hint ? <div className="text-muted-foreground mt-0.5 text-xs">{hint}</div> : null}
-    </Card>
+      <div className="flex items-end justify-between gap-3">
+        <p
+          className={cn(
+            "display text-ink leading-none font-medium",
+            compact ? "text-[26px]" : "text-[32px]",
+            tone,
+          )}
+        >
+          {value}
+        </p>
+        {trend ? <Sparkline values={trend} className="text-ink mb-0.5 shrink-0" /> : null}
+      </div>
+      {hint ? <div className="text-ink-soft text-[12.5px]">{hint}</div> : null}
+    </div>
   );
 }
 
 /**
- * Headline KPIs for the current scope and period. Growth and attainment are
+ * Headline KPIs as one strip divided by hairlines. Growth and attainment are
  * ratios of summed revenue (see domain/selectors/aggregate), never averages of
  * market percentages. Deltas compare with the previous month.
  */
@@ -124,65 +128,62 @@ export function KpiTiles({
 
   return (
     <div
-      className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4"
+      className="border-ink grid grid-cols-1 border-t sm:grid-cols-2 xl:grid-cols-4"
       role="list"
       aria-label="Headline KPIs"
     >
-      <div role="listitem">
-        <Tile
-          compact={compact}
-          label={`Revenue · ${formatPeriod(period)}`}
-          value={formatCurrency(now.revenue)}
-          trend={trend}
-          hint={
-            <span className="inline-flex items-center gap-1">
-              <Delta value={momPct} unit="pct" />
-              <span>vs {prevPeriod ? formatPeriod(prevPeriod) : "n/a"}</span>
-            </span>
-          }
-        />
-      </div>
-      <div role="listitem">
-        <Tile
-          compact={compact}
-          label="Growth, year on year"
-          value={formatPercent(now.growthPct, { signed: true })}
-          tone={now.growthPct !== null && now.growthPct < 0 ? "text-status-off-track" : undefined}
-          hint={
-            <span className="inline-flex items-center gap-1">
-              <Delta value={growthDelta} unit="pt" />
-              <span>vs previous month</span>
-            </span>
-          }
-        />
-      </div>
-      <div role="listitem">
-        <Tile
-          compact={compact}
-          label="Forecast attainment"
-          value={formatPercent(now.forecastAttainmentPct)}
-          tone={
-            now.forecastAttainmentPct !== null && now.forecastAttainmentPct < 95
-              ? "text-status-off-track"
-              : undefined
-          }
-          hint={
-            <span className="inline-flex items-center gap-1">
-              <Delta value={attainmentDelta} unit="pt" />
-              <span>· variance {formatCurrency(now.variance)}</span>
-            </span>
-          }
-        />
-      </div>
-      <div role="listitem">
-        <Tile
-          compact={compact}
-          label="Markets needing attention"
-          value={`${counts.needsAttention} of ${counts.total}`}
-          tone={attentionTone}
-          hint={`${counts.off_track} off track · ${counts.at_risk} at risk · ${counts.on_track} on track`}
-        />
-      </div>
+      <Cell
+        index="01"
+        compact={compact}
+        label={`Revenue · ${formatPeriod(period)}`}
+        value={formatCurrency(now.revenue)}
+        trend={trend}
+        hint={
+          <Delta
+            value={momPct}
+            unit="pct"
+            suffix={`vs ${prevPeriod ? formatPeriod(prevPeriod) : "n/a"}`}
+          />
+        }
+      />
+      <Cell
+        index="02"
+        compact={compact}
+        label="Growth, year on year"
+        value={formatPercent(now.growthPct, { signed: true })}
+        tone={now.growthPct !== null && now.growthPct < 0 ? "text-status-off-track" : undefined}
+        hint={<Delta value={growthDelta} unit="pt" suffix="vs previous month" />}
+      />
+      <Cell
+        index="03"
+        compact={compact}
+        label="Forecast attainment"
+        value={formatPercent(now.forecastAttainmentPct)}
+        tone={
+          now.forecastAttainmentPct !== null && now.forecastAttainmentPct < 95
+            ? "text-status-off-track"
+            : undefined
+        }
+        hint={
+          <Delta
+            value={attainmentDelta}
+            unit="pt"
+            suffix={`variance ${formatCurrency(now.variance)}`}
+          />
+        }
+      />
+      <Cell
+        index="04"
+        compact={compact}
+        label="Markets needing attention"
+        value={`${counts.needsAttention} of ${counts.total}`}
+        tone={attentionTone}
+        hint={
+          <span className="numeral text-[12.5px]">
+            {counts.off_track} off track · {counts.at_risk} at risk · {counts.on_track} on track
+          </span>
+        }
+      />
     </div>
   );
 }

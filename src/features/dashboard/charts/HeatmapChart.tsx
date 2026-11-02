@@ -38,10 +38,13 @@ export function HeatmapChart({
   scope,
   period,
   onSelectCell,
+  index: sectionIndex,
 }: {
   scope: Scope;
   period: Period;
   onSelectCell: (marketId: string, period: Period) => void;
+  /** Section number shown as an eyebrow. */
+  index?: string;
 }) {
   const index = useData();
   const [metric, setMetric] = useState<HeatmapMetric>("growthPct");
@@ -116,6 +119,7 @@ export function HeatmapChart({
 
   return (
     <ChartFrame
+      index={sectionIndex}
       title="Markets × months"
       description={`${METRIC_LABEL[metric]} per market and month, red below zero and green above. Click or press Enter on a cell to focus that market and month.`}
       summary={summary}

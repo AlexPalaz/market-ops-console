@@ -1,12 +1,13 @@
 "use client";
 
 import { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StatusBadge } from "@/components/shared/StatusBadge";
+import { Section } from "@/components/shared/Section";
+import { StatusMark } from "@/components/shared/StatusMark";
 import { useData } from "@/data/DataProvider";
 import { formatCurrency, formatPercent } from "@/domain/format";
 import { topMovers, type MarketSnapshot } from "@/domain/selectors";
 import type { Period, Scope } from "@/domain/types";
+import { cn } from "@/lib/utils";
 
 function MoverRow({ s, onSelect }: { s: MarketSnapshot; onSelect: (id: string) => void }) {
   const g = s.kpis.growthPct ?? 0;
@@ -15,24 +16,25 @@ function MoverRow({ s, onSelect }: { s: MarketSnapshot; onSelect: (id: string) =
       <button
         type="button"
         onClick={() => onSelect(s.market.id)}
-        className="hover:bg-muted focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-left focus-visible:ring-3 focus-visible:outline-none"
+        className="group border-rule hover:bg-muted/50 focus-visible:bg-muted/50 flex w-full items-center gap-3 border-b py-2.5 text-left transition-colors last:border-b-0 focus-visible:outline-none"
       >
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-medium">{s.market.name}</span>
-          <span className="text-muted-foreground block text-xs">
+          <span className="text-ink group-hover:decoration-rule block truncate text-[13.5px] font-medium group-hover:underline group-hover:underline-offset-4">
+            {s.market.name}
+          </span>
+          <span className="numeral text-ink-soft block text-[12px]">
             {s.regionName} · {formatCurrency(s.kpis.revenue)}
           </span>
         </span>
         <span
-          className={
-            g >= 0
-              ? "text-status-on-track text-sm font-semibold"
-              : "text-status-off-track text-sm font-semibold"
-          }
+          className={cn(
+            "numeral text-[13.5px] font-medium",
+            g >= 0 ? "text-status-on-track" : "text-status-off-track",
+          )}
         >
           {formatPercent(g, { signed: true })}
         </span>
-        <StatusBadge status={s.status} />
+        <StatusMark status={s.status} size="sm" className="w-[5.5rem] justify-end" />
       </button>
     </li>
   );
@@ -44,11 +46,13 @@ export function TopMovers({
   period,
   onSelectMarket,
   n = 3,
+  index: sectionIndex,
 }: {
   scope: Scope;
   period: Period;
   onSelectMarket: (id: string) => void;
   n?: number;
+  index?: string;
 }) {
   const index = useData();
   const { gainers, decliners } = useMemo(
@@ -57,40 +61,35 @@ export function TopMovers({
   );
 
   return (
-    <Card className="@container gap-2">
-      <CardHeader>
-        <CardTitle className="text-sm font-semibold">Top movers, year on year</CardTitle>
-      </CardHeader>
-      <CardContent className="grid gap-3 @lg:grid-cols-2">
+    <Section title="Top movers, year on year" index={sectionIndex} minHeight={0}>
+      <div className="@container grid gap-x-8 gap-y-4 @lg:grid-cols-2">
         <div>
-          <p className="text-muted-foreground mb-1 px-2 text-xs font-medium">Growing</p>
+          <p className="eyebrow mb-1">Growing</p>
           {gainers.length ? (
-            <ul className="space-y-0.5">
+            <ul>
               {gainers.map((s) => (
                 <MoverRow key={s.market.id} s={s} onSelect={onSelectMarket} />
               ))}
             </ul>
           ) : (
-            <p className="text-muted-foreground px-2 text-xs">
-              No market is growing in this period.
-            </p>
+            <p className="text-ink-soft py-2 text-[12.5px]">No market is growing in this period.</p>
           )}
         </div>
         <div>
-          <p className="text-muted-foreground mb-1 px-2 text-xs font-medium">Declining</p>
+          <p className="eyebrow mb-1">Declining</p>
           {decliners.length ? (
-            <ul className="space-y-0.5">
+            <ul>
               {decliners.map((s) => (
                 <MoverRow key={s.market.id} s={s} onSelect={onSelectMarket} />
               ))}
             </ul>
           ) : (
-            <p className="text-muted-foreground px-2 text-xs">
+            <p className="text-ink-soft py-2 text-[12.5px]">
               No market is declining in this period.
             </p>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </Section>
   );
 }

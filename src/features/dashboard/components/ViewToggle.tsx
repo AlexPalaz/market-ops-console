@@ -3,6 +3,7 @@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type { ViewMode } from "@/domain/types";
 
+/** Executive / Analyst as underline tabs. */
 export function ViewToggle({
   value,
   onChange,
@@ -18,13 +19,14 @@ export function ViewToggle({
         if (v === "exec" || v === "analyst") onChange(v);
       }}
       aria-label="Audience view"
-      variant="outline"
+      variant="default"
       size="sm"
+      className="h-14 border-b-0"
     >
-      <ToggleGroupItem value="exec" aria-label="Executive overview">
+      <ToggleGroupItem value="exec" aria-label="Executive overview" className="h-14">
         Executive
       </ToggleGroupItem>
-      <ToggleGroupItem value="analyst" aria-label="Analyst deep-dive">
+      <ToggleGroupItem value="analyst" aria-label="Analyst deep-dive" className="h-14">
         Analyst
       </ToggleGroupItem>
     </ToggleGroup>

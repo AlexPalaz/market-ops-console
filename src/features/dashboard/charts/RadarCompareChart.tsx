@@ -89,11 +89,14 @@ export function RadarCompareChart({
   period,
   compare,
   onCompareChange,
+  index: sectionIndex,
 }: {
   scope: Scope;
   period: Period;
   compare: string[];
   onCompareChange: (ids: string[]) => void;
+  /** Section number shown as an eyebrow. */
+  index?: string;
 }) {
   const index = useData();
   const reduceMotion = usePrefersReducedMotion();
@@ -122,6 +125,7 @@ export function RadarCompareChart({
 
   return (
     <ChartFrame
+      index={sectionIndex}
       title="Compare across KPIs"
       description="Each axis is scaled 0–100 between the lowest and highest value among the compared entities, so shapes are comparable even though units differ. Share is only defined for markets."
       summary={summary}

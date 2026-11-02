@@ -41,7 +41,7 @@ test.describe("accessibility (axe, WCAG 2.1 AA, serious+critical)", () => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Portfolio");
     const duration = await page.evaluate(
-      () => getComputedStyle(document.querySelector("[data-slot=card]")!).transitionDuration,
+      () => getComputedStyle(document.querySelector("[data-slot=button]")!).transitionDuration,
     );
     expect(["0.01ms", "1e-05s"]).toContain(duration);
   });

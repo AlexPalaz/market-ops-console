@@ -114,14 +114,14 @@ describe("optimistic alert mutations", () => {
     renderWithProviders(<AlertsPanel period="2026-05" onSelectMarket={vi.fn()} />);
     const toggle = await screen.findByRole("switch", { name: "Disable Any market shrinking" });
     expect(toggle).toHaveAttribute("aria-checked", "true");
-    expect(screen.getByText(/1 triggered/)).toBeInTheDocument();
+    expect(screen.getByText(/1 rule triggered/)).toBeInTheDocument();
 
     await userEvent.click(toggle);
     expect(screen.getByRole("switch", { name: "Enable Any market shrinking" })).toHaveAttribute(
       "aria-checked",
       "false",
     );
-    expect(screen.queryByText(/triggered/)).not.toBeInTheDocument();
+    expect(screen.getByText(/No rule is triggered/)).toBeInTheDocument();
 
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith("Change not saved", expect.anything()),
@@ -132,6 +132,6 @@ describe("optimistic alert mutations", () => {
         "true",
       ),
     );
-    expect(screen.getByText(/1 triggered/)).toBeInTheDocument();
+    expect(screen.getByText(/1 rule triggered/)).toBeInTheDocument();
   });
 });

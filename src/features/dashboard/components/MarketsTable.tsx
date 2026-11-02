@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Section } from "@/components/shared/Section";
+import { StatusMark } from "@/components/shared/StatusMark";
 import {
   Table,
   TableBody,
@@ -14,7 +14,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { StatusBadge } from "@/components/shared/StatusBadge";
 import { AlertBadge } from "@/features/alerts/components/AlertBadge";
 import { useAlertHits } from "@/features/alerts/hooks/useAlertHits";
 import { useData } from "@/data/DataProvider";
@@ -77,11 +76,13 @@ export function MarketsTable({
   period,
   selectedMarketId,
   onSelectMarket,
+  index: sectionIndex,
 }: {
   scope: Scope;
   period: Period;
   selectedMarketId?: string;
   onSelectMarket: (id: string) => void;
+  index?: string;
 }) {
   const index = useData();
   const [sortKey, setSortKey] = useState<SortKey>("revenue");
@@ -116,13 +117,16 @@ export function MarketsTable({
     : "";
 
   return (
-    <Card className="gap-2">
-      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
-        <CardTitle className="text-sm font-semibold">Markets · {formatPeriod(period)}</CardTitle>
+    <Section
+      title="Markets"
+      index={sectionIndex}
+      description={`${formatPeriod(period)}${productNote}. Sorted by ${COLUMNS.find((c) => c.key === sortKey)?.label.toLowerCase()}, ${sortDir === "asc" ? "ascending" : "descending"}.`}
+      minHeight={0}
+      actions={
         <ToggleGroup
           type="multiple"
           size="sm"
-          variant="outline"
+          variant="default"
           value={statusFilter}
           onValueChange={(v) => setStatusFilter(v as Status[])}
           aria-label="Filter by status"
@@ -131,121 +135,129 @@ export function MarketsTable({
           <ToggleGroupItem value="at_risk">At risk</ToggleGroupItem>
           <ToggleGroupItem value="on_track">On track</ToggleGroupItem>
         </ToggleGroup>
-      </CardHeader>
-      <CardContent className="overflow-x-auto">
-        <Table>
-          <TableCaption className="sr-only">
-            Markets with revenue, growth, forecast attainment, variance, share and units for{" "}
-            {formatPeriod(period)}
-            {productNote}. Sorted by {sortKey}, {sortDir}.
-          </TableCaption>
-          <TableHeader>
-            <TableRow>
-              {COLUMNS.map((c) => {
-                const active = c.key === sortKey;
-                const Icon = active
-                  ? sortDir === "asc"
-                    ? ArrowUpIcon
-                    : ArrowDownIcon
-                  : ArrowUpDownIcon;
-                return (
-                  <TableHead
-                    key={c.key}
-                    aria-sort={active ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
-                    className={cn(c.numeric && "text-right")}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="xs"
-                      onClick={() => toggleSort(c.key)}
-                      className={cn("-mx-2 font-medium", c.numeric && "flex-row-reverse")}
-                    >
-                      {c.label}
-                      <Icon className={cn("size-3", !active && "opacity-40")} aria-hidden />
-                    </Button>
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={COLUMNS.length} className="text-muted-foreground text-center">
-                  No market matches the current filter.
-                </TableCell>
-              </TableRow>
-            ) : (
-              rows.map((s) => {
-                const selected = s.market.id === selectedMarketId;
-                return (
-                  <TableRow
-                    key={s.market.id}
-                    data-state={selected ? "selected" : undefined}
+      }
+    >
+      <Table>
+        <TableCaption className="sr-only">
+          Markets with revenue, growth, forecast attainment, variance, share and units for{" "}
+          {formatPeriod(period)}
+          {productNote}. Sorted by {sortKey}, {sortDir}.
+        </TableCaption>
+        <TableHeader>
+          <TableRow>
+            {COLUMNS.map((c) => {
+              const active = c.key === sortKey;
+              const Icon = active
+                ? sortDir === "asc"
+                  ? ArrowUpIcon
+                  : ArrowDownIcon
+                : ArrowUpDownIcon;
+              return (
+                <TableHead
+                  key={c.key}
+                  aria-sort={active ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
+                  className={cn(c.numeric && "text-right")}
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggleSort(c.key)}
                     className={cn(
-                      "hover:bg-muted/60 cursor-pointer transition-colors",
-                      selected && "bg-accent/60 shadow-[inset_3px_0_0_var(--primary)]",
+                      "eyebrow hover:text-ink focus-visible:ring-ring inline-flex items-center gap-1 rounded-sm transition-colors focus-visible:ring-2 focus-visible:outline-none",
+                      c.numeric && "flex-row-reverse",
+                      active && "text-ink",
                     )}
-                    onClick={() => onSelectMarket(s.market.id)}
                   >
-                    <TableCell className="font-medium">
-                      <button
-                        type="button"
-                        className="focus-visible:ring-ring/50 rounded-sm text-left underline-offset-2 hover:underline focus-visible:ring-3 focus-visible:outline-none"
-                        aria-current={selected ? "true" : undefined}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSelectMarket(s.market.id);
-                        }}
-                      >
-                        {s.market.name}
-                      </button>
-                      <span className="text-muted-foreground flex items-center gap-1 text-xs">
-                        {s.regionName}
-                        <AlertBadge hits={alertHits.byMarket.get(s.market.id)} />
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge status={s.status} />
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {formatCurrencyExact(s.kpis.revenue)}
-                    </TableCell>
-                    <TableCell
-                      className={cn(
-                        "text-right",
-                        (s.kpis.growthPct ?? 0) < 0
-                          ? "text-status-off-track"
-                          : "text-status-on-track",
-                      )}
+                    {c.label}
+                    <Icon
+                      className={cn("size-3", !active && "opacity-40")}
+                      aria-hidden
+                      strokeWidth={1.75}
+                    />
+                  </button>
+                </TableHead>
+              );
+            })}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rows.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={COLUMNS.length} className="text-ink-soft py-6 text-center">
+                No market matches the current filter.
+              </TableCell>
+            </TableRow>
+          ) : (
+            rows.map((s) => {
+              const selected = s.market.id === selectedMarketId;
+              return (
+                <TableRow
+                  key={s.market.id}
+                  data-state={selected ? "selected" : undefined}
+                  className="cursor-pointer"
+                  onClick={() => onSelectMarket(s.market.id)}
+                >
+                  <TableCell className={cn("font-medium", selected && "pl-2")}>
+                    <button
+                      type="button"
+                      className="decoration-rule focus-visible:ring-ring rounded-sm text-left underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                      aria-current={selected ? "true" : undefined}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectMarket(s.market.id);
+                      }}
                     >
-                      {formatPercent(s.kpis.growthPct, { signed: true })}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {formatPercent(s.kpis.forecastAttainmentPct)}
-                    </TableCell>
-                    <TableCell
-                      className={cn("text-right", s.kpis.variance < 0 && "text-status-off-track")}
-                    >
-                      {formatCurrencyExact(s.kpis.variance)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {scope.productId ? "—" : formatPercent(s.sharePct)}
-                    </TableCell>
-                    <TableCell className="text-right">{formatInteger(s.kpis.units)}</TableCell>
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
-        {scope.productId ? (
-          <p className="text-muted-foreground mt-2 text-xs">
-            Market share is only defined per market in the dataset, so it is hidden while a product
-            filter is active.
-          </p>
-        ) : null}
-      </CardContent>
-    </Card>
+                      {s.market.name}
+                    </button>
+                    <span className="text-ink-soft flex items-center gap-1.5 text-[11.5px]">
+                      {s.regionName}
+                      <AlertBadge hits={alertHits.byMarket.get(s.market.id)} />
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <StatusMark status={s.status} size="sm" />
+                  </TableCell>
+                  <TableCell className="numeral text-right">
+                    {formatCurrencyExact(s.kpis.revenue)}
+                  </TableCell>
+                  <TableCell
+                    className={cn(
+                      "numeral text-right",
+                      (s.kpis.growthPct ?? 0) < 0
+                        ? "text-status-off-track"
+                        : "text-status-on-track",
+                    )}
+                  >
+                    {formatPercent(s.kpis.growthPct, { signed: true })}
+                  </TableCell>
+                  <TableCell className="numeral text-right">
+                    {formatPercent(s.kpis.forecastAttainmentPct)}
+                  </TableCell>
+                  <TableCell
+                    className={cn(
+                      "numeral text-right",
+                      s.kpis.variance < 0 && "text-status-off-track",
+                    )}
+                  >
+                    {formatCurrencyExact(s.kpis.variance)}
+                  </TableCell>
+                  <TableCell className="numeral text-right">
+                    {scope.productId ? "—" : formatPercent(s.sharePct)}
+                  </TableCell>
+                  <TableCell className="numeral text-right">
+                    {formatInteger(s.kpis.units)}
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          )}
+        </TableBody>
+      </Table>
+      {scope.productId ? (
+        <p className="text-ink-soft mt-2 text-[12px]">
+          Market share is only defined per market in the dataset, so it is hidden while a product
+          filter is active.
+        </p>
+      ) : null}
+    </Section>
   );
 }

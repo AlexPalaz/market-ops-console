@@ -1,14 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import {
-  ActivityIcon,
-  MessageSquareTextIcon,
-  PanelRightCloseIcon,
-  SparklesIcon,
-} from "lucide-react";
+import { MessageSquareTextIcon, PanelRightCloseIcon } from "lucide-react";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
-import { StatusBadge } from "@/components/shared/StatusBadge";
+import { StatusMark } from "@/components/shared/StatusMark";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -24,11 +19,12 @@ import { PeriodSelect } from "./PeriodSelect";
 import { ScopeBreadcrumbs } from "./ScopeBreadcrumbs";
 import { ViewToggle } from "./ViewToggle";
 
-const HEADER_H = 52;
+const HEADER_H = 56;
 
 /**
- * Application shell: header with audience view and period, the drill path,
- * the workspace, and the assistant as a side panel (desktop) or sheet (mobile).
+ * Application shell: a hairline header with the wordmark, audience tabs,
+ * period and theme; the page title with its breadcrumb; the workspace; the
+ * assistant as a side surface (desktop) or sheet (mobile).
  */
 export function DashboardShell() {
   const index = useData();
@@ -49,45 +45,42 @@ export function DashboardShell() {
   return (
     <div className="flex min-h-screen flex-col">
       <header
-        className="bg-background/90 supports-[backdrop-filter]:bg-background/75 sticky top-0 z-20 border-b backdrop-blur"
+        className="border-rule bg-paper/92 supports-[backdrop-filter]:bg-paper/85 sticky top-0 z-20 border-b backdrop-blur"
         style={{ minHeight: HEADER_H }}
       >
-        <div
-          aria-hidden
-          className="from-primary h-0.5 w-full bg-gradient-to-r via-[oklch(0.65_0.15_200)] to-[oklch(0.7_0.17_320)]"
-        />
-        <div className="mx-auto flex min-h-[inherit] w-full max-w-[1800px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-1.5">
-          <div className="flex min-w-0 items-center gap-2.5">
-            <span
-              aria-hidden
-              className="bg-primary text-primary-foreground flex size-7 items-center justify-center rounded-lg shadow-sm"
-            >
-              <ActivityIcon className="size-4" />
+        <div className="mx-auto flex min-h-[inherit] w-full max-w-[1680px] flex-wrap items-center gap-x-6 gap-y-2 px-6 xl:px-8">
+          <div className="flex min-w-0 items-baseline gap-2.5">
+            <span className="display text-ink text-[21px] leading-none font-medium tracking-tight">
+              Market Ops
             </span>
-            <span className="text-sm font-semibold tracking-tight">Market Ops Console</span>
-            <span className="bg-card text-muted-foreground hidden items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] sm:inline-flex">
+            <span className="eyebrow">Console</span>
+            <span className="eyebrow ml-2 hidden items-center gap-1.5 sm:inline-flex">
               <span className="bg-status-on-track size-1.5 rounded-full" aria-hidden />
               Data as of {formatPeriodLong(index.latestPeriod)}
             </span>
           </div>
-          <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto">
-            <PeriodSelect value={selection.period} onChange={setPeriod} />
+          <div className="flex w-full flex-wrap items-center gap-x-5 gap-y-2 sm:ml-auto sm:w-auto">
             <ViewToggle value={selection.view} onChange={setView} />
+            <PeriodSelect value={selection.period} onChange={setPeriod} />
             <ThemeToggle />
             <Button
-              variant={panelOpen ? "outline" : "default"}
+              variant="outline"
               size="sm"
               className="hidden lg:inline-flex"
               aria-pressed={panelOpen}
               onClick={() => setPanelOpen((v) => !v)}
             >
-              {panelOpen ? <PanelRightCloseIcon aria-hidden /> : <SparklesIcon aria-hidden />}
+              {panelOpen ? (
+                <PanelRightCloseIcon aria-hidden strokeWidth={1.75} />
+              ) : (
+                <span className="bg-signal size-2 rounded-sm" aria-hidden />
+              )}
               Assistant
             </Button>
             <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" size="sm" className="lg:hidden">
-                  <MessageSquareTextIcon aria-hidden />
+                  <MessageSquareTextIcon aria-hidden strokeWidth={1.75} />
                   Assistant
                 </Button>
               </SheetTrigger>
@@ -106,36 +99,30 @@ export function DashboardShell() {
 
       <div
         className={cn(
-          "mx-auto grid w-full max-w-[1800px] flex-1 gap-4 px-4 py-4",
+          "mx-auto grid w-full max-w-[1680px] flex-1 gap-8 px-6 py-6 xl:px-8",
           panelOpen && "lg:grid-cols-[minmax(0,1fr)_400px]",
         )}
       >
         <main id="main" className="min-w-0">
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
             <div>
               <ScopeBreadcrumbs scope={selection.scope} onNavigate={goTo} />
-              <div className="mt-1 flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-semibold tracking-tight">
+              <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <h1 className="display text-ink text-[40px] leading-none font-medium tracking-tight">
                   {scopeLabel(index, selection.scope)}
                 </h1>
                 {selectedMarket ? (
                   <>
-                    <span className="numeral bg-card text-muted-foreground rounded-md border px-1.5 py-0.5 text-[11px]">
-                      {selectedMarket.iso3}
-                    </span>
-                    <StatusBadge status={selectedMarket.kpis.status} />
+                    <span className="eyebrow numeral">{selectedMarket.iso3}</span>
+                    <StatusMark status={selectedMarket.kpis.status} />
                   </>
                 ) : null}
               </div>
             </div>
-            <div className="flex items-center gap-1.5 text-xs">
-              <span className="bg-card text-muted-foreground rounded-full border px-2 py-0.5">
-                {selection.view === "exec" ? "Executive overview" : "Analyst deep-dive"}
-              </span>
-              <span className="numeral bg-card text-muted-foreground rounded-full border px-2 py-0.5">
-                {formatPeriodLong(selection.period)}
-              </span>
-            </div>
+            <p className="eyebrow numeral">
+              {selection.view === "exec" ? "Executive overview" : "Analyst deep-dive"} ·{" "}
+              {formatPeriodLong(selection.period)}
+            </p>
           </div>
 
           <ErrorBoundary label="The dashboard">
@@ -147,7 +134,7 @@ export function DashboardShell() {
           <aside className="hidden lg:block">
             <div
               className="sticky"
-              style={{ top: HEADER_H + 16, height: `calc(100vh - ${HEADER_H + 32}px)` }}
+              style={{ top: HEADER_H + 24, height: `calc(100vh - ${HEADER_H + 48}px)` }}
             >
               <ErrorBoundary label="The assistant">
                 <AssistantPanel onFollowCitation={followCitation} />

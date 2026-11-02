@@ -97,12 +97,15 @@ export function TimeSeriesChart({
   period,
   onSelectPeriod,
   fill = false,
+  index: sectionIndex,
 }: {
   scope: Scope;
   period: Period;
   onSelectPeriod: (p: Period) => void;
   /** Fill the parent row instead of a fixed 300px chart. */
   fill?: boolean;
+  /** Section number shown as an eyebrow. */
+  index?: string;
 }) {
   const index = useData();
   const reduceMotion = usePrefersReducedMotion();
@@ -122,6 +125,7 @@ export function TimeSeriesChart({
 
   return (
     <ChartFrame
+      index={sectionIndex}
       title="Actual vs forecast vs prior year"
       description={`${label}, monthly revenue over the 24-month horizon. Click a month to select it.`}
       summary={summary}

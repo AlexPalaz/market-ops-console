@@ -10,37 +10,44 @@ import { RiskList } from "./RiskList";
 import { TopMovers } from "./TopMovers";
 
 /**
- * Health, risks and priorities at a glance. Two independent columns (not grid
- * rows) so cards of different heights stack without leaving gaps.
+ * Health, risks and priorities at a glance. Two independent columns divided by
+ * a hairline; sections stack with their own ink rules.
  */
 export function ExecView({ api }: { api: DashboardSelectionApi }) {
   const { selection, selectMarket, selectProduct, setMetric, setPeriod, focus } = api;
   const { scope, period, metric } = selection;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-8">
       <KpiTiles scope={scope} period={period} />
-      <div className="grid gap-4 lg:grid-cols-12 [&>*]:min-w-0">
-        <div className="flex flex-col gap-4 lg:col-span-7">
+      <div className="grid gap-8 lg:grid-cols-12 lg:gap-0 [&>*]:min-w-0">
+        <div className="flex flex-col gap-8 lg:col-span-7 lg:pr-8">
           <MarketsMapLazy
+            index="02"
             scope={scope}
             period={period}
             metric={metric}
             onMetricChange={setMetric}
             onSelectMarket={selectMarket}
           />
-          <TimeSeriesChart scope={scope} period={period} onSelectPeriod={setPeriod} />
+          <TimeSeriesChart index="03" scope={scope} period={period} onSelectPeriod={setPeriod} />
         </div>
-        <div className="flex flex-col gap-4 lg:col-span-5">
+        <div className="lg:border-rule flex flex-col gap-8 lg:col-span-5 lg:border-l lg:pl-8">
           <RiskList
+            index="04"
             scope={scope}
             period={period}
             onSelectMarket={selectMarket}
             onSelectPeriod={(marketId, p) => focus({ marketId, productId: scope.productId }, p)}
           />
-          <TopMovers scope={scope} period={period} onSelectMarket={selectMarket} />
-          <AlertsPanel period={period} onSelectMarket={selectMarket} compact />
-          <ProductBreakdown scope={scope} period={period} onSelectProduct={selectProduct} />
+          <TopMovers index="05" scope={scope} period={period} onSelectMarket={selectMarket} />
+          <AlertsPanel index="06" period={period} onSelectMarket={selectMarket} compact />
+          <ProductBreakdown
+            index="07"
+            scope={scope}
+            period={period}
+            onSelectProduct={selectProduct}
+          />
         </div>
       </div>
     </div>

@@ -18,11 +18,12 @@ export function AnalystView({ api }: { api: DashboardSelectionApi }) {
   const { scope, period, metric, compare } = selection;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-8">
       <KpiTiles scope={scope} period={period} compact />
-      <div className="grid gap-4 lg:grid-cols-12 [&>*]:min-w-0">
-        <div className="lg:col-span-6">
+      <div className="grid gap-8 lg:grid-cols-12 lg:gap-0 [&>*]:min-w-0">
+        <div className="lg:col-span-6 lg:pr-8">
           <MarketsMapLazy
+            index="02"
             scope={scope}
             period={period}
             metric={metric}
@@ -30,33 +31,47 @@ export function AnalystView({ api }: { api: DashboardSelectionApi }) {
             onSelectMarket={selectMarket}
           />
         </div>
-        <div className="lg:col-span-6">
-          <TimeSeriesChart scope={scope} period={period} onSelectPeriod={setPeriod} fill />
+        <div className="lg:border-rule lg:col-span-6 lg:border-l lg:pl-8">
+          <TimeSeriesChart
+            index="03"
+            scope={scope}
+            period={period}
+            onSelectPeriod={setPeriod}
+            fill
+          />
         </div>
       </div>
       <HeatmapChart
+        index="04"
         scope={scope}
         period={period}
         onSelectCell={(marketId, p) => focus({ marketId, productId: scope.productId }, p)}
       />
-      <div className="grid gap-4 lg:grid-cols-12 [&>*]:min-w-0">
-        <div className="flex flex-col gap-4 lg:col-span-7">
+      <div className="grid gap-8 lg:grid-cols-12 lg:gap-0 [&>*]:min-w-0">
+        <div className="flex flex-col gap-8 lg:col-span-7 lg:pr-8">
           <MarketsTable
+            index="05"
             scope={scope}
             period={period}
             selectedMarketId={scope.marketId}
             onSelectMarket={selectMarket}
           />
-          <ProductBreakdown scope={scope} period={period} onSelectProduct={selectProduct} />
+          <ProductBreakdown
+            index="06"
+            scope={scope}
+            period={period}
+            onSelectProduct={selectProduct}
+          />
         </div>
-        <div className="flex flex-col gap-4 lg:col-span-5">
+        <div className="lg:border-rule flex flex-col gap-8 lg:col-span-5 lg:border-l lg:pl-8">
           <RadarCompareChart
+            index="07"
             scope={scope}
             period={period}
             compare={compare}
             onCompareChange={setCompare}
           />
-          <AlertsPanel period={period} onSelectMarket={selectMarket} />
+          <AlertsPanel index="08" period={period} onSelectMarket={selectMarket} />
         </div>
       </div>
     </div>
