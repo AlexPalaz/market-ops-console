@@ -4,25 +4,20 @@ import { useData } from "@/data/DataProvider";
 import { formatPeriodLong } from "@/domain/format";
 import { scopeLabel } from "@/domain/selectors";
 import { useDashboardSelection } from "../hooks/useDashboardSelection";
+import { AnalystView } from "./AnalystView";
+import { ExecView } from "./ExecView";
 import { PeriodSelect } from "./PeriodSelect";
 import { ScopeBreadcrumbs } from "./ScopeBreadcrumbs";
 import { ViewToggle } from "./ViewToggle";
-import { ChartFrame } from "@/components/shared/ChartFrame";
 
 /**
  * Application shell: header with audience view and period, the drill path,
- * and the workspace grid. Phase 2 renders the frame only; charts arrive in
- * Phase 3 and the assistant panel in Phase 4.
+ * and the workspace. The assistant panel arrives in Phase 4.
  */
 export function DashboardShell() {
   const index = useData();
-  const { selection, goTo, setPeriod, setView } = useDashboardSelection();
-
-  const placeholder = (
-    <div className="text-muted-foreground flex h-full min-h-[inherit] items-center justify-center rounded-md border border-dashed text-xs">
-      Not implemented yet
-    </div>
-  );
+  const api = useDashboardSelection();
+  const { selection, goTo, setPeriod, setView } = api;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -55,23 +50,7 @@ export function DashboardShell() {
           </p>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-12">
-          <section aria-label="Overview" className="lg:col-span-12">
-            <ChartFrame title="Portfolio health" minHeight={96}>
-              {placeholder}
-            </ChartFrame>
-          </section>
-          <section aria-label="Map" className="lg:col-span-7">
-            <ChartFrame title="Markets map" minHeight={360}>
-              {placeholder}
-            </ChartFrame>
-          </section>
-          <section aria-label="Time series" className="lg:col-span-5">
-            <ChartFrame title="Actual vs forecast vs prior year" minHeight={360}>
-              {placeholder}
-            </ChartFrame>
-          </section>
-        </div>
+        {selection.view === "exec" ? <ExecView api={api} /> : <AnalystView api={api} />}
       </main>
     </div>
   );

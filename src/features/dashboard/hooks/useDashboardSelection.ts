@@ -3,6 +3,7 @@
 import { useCallback, useMemo } from "react";
 import { useQueryStates } from "nuqs";
 import { useData } from "@/data/DataProvider";
+import { normalizeScope } from "@/domain/selectors";
 import type { MetricKey, Period, Scope, ViewMode } from "@/domain/types";
 import {
   normalizeSelection,
@@ -15,6 +16,8 @@ export interface DashboardSelectionApi {
   selection: DashboardSelection;
   /** Drill to a scope (push: back/forward restores the previous level). */
   goTo: (scope: Scope) => void;
+  /** Drill to a scope and period in one history entry (heat map cells, citations). */
+  focus: (scope: Scope, period: Period) => void;
   selectRegion: (regionId: string | null) => void;
   selectMarket: (marketId: string | null) => void;
   selectProduct: (productId: string | null) => void;
@@ -41,8 +44,12 @@ export function useDashboardSelection(): DashboardSelectionApi {
   const selection = useMemo(() => normalizeSelection(index, raw), [index, raw]);
 
   const push = useCallback(
-    (partial: Partial<DashboardSelection>) =>
-      setRaw(selectionToRaw(index, partial), { history: "push", scroll: false }),
+    (partial: Partial<DashboardSelection>) => {
+      const coherent = partial.scope
+        ? { ...partial, scope: normalizeScope(index, partial.scope) }
+        : partial;
+      return setRaw(selectionToRaw(index, coherent), { history: "push", scroll: false });
+    },
     [index, setRaw],
   );
   const replace = useCallback(
@@ -52,6 +59,7 @@ export function useDashboardSelection(): DashboardSelectionApi {
   );
 
   const goTo = useCallback((scope: Scope) => push({ scope }), [push]);
+  const focus = useCallback((scope: Scope, period: Period) => push({ scope, period }), [push]);
 
   const selectRegion = useCallback(
     (regionId: string | null) =>
@@ -106,6 +114,7 @@ export function useDashboardSelection(): DashboardSelectionApi {
   return {
     selection,
     goTo,
+    focus,
     selectRegion,
     selectMarket,
     selectProduct,
