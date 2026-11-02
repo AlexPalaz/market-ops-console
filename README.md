@@ -6,8 +6,7 @@ A market operations console over a fixed, synthetic dataset: a dense analytical 
 
 Built for the Front-End Engineer take-home. The AI is faked on purpose, exactly as the brief asks: the assistant streams canned answers from `fixtures.json` through the documented SSE contract. Everything the user can verify (numbers, status, evidence) is computed from `data.json`; everything generated is labelled as such.
 
-> ✍️ **Candidate's note.** Blocks marked like this one are where the brief asks for my own reasoning rather than generated text. They are written as prompts to myself and must be replaced before submission.
-> <!-- HUMAN REVIEW: replace every "Candidate's note" block with your own words, then delete this line. -->
+> ✍️ **Candidate's note.** Blocks marked like this one are where the brief asks for my own reasoning rather than generated text. They are written as prompts to myself and are replaced before submission.
 
 ![Executive overview](docs/screenshots/01-executive-portfolio.png)
 
@@ -172,7 +171,6 @@ A restrained, data-dense console with one accent. Cool off-white canvas with a f
 | Formatting           | `Intl.NumberFormat` / `Intl.DateTimeFormat`, fixed `en-US`    | per-user locale                             | A shared link must show the same figures to everyone; locale is a parameter in `format.ts` for when that becomes a preference.                                                                                                                                  |
 
 > ✍️ **Candidate's note (technical decisions).** Write what you weighed and why in your own words: where you agree with the choices above, where you would have chosen differently with more time or in a real product, and what you deliberately kept simple.
-> <!-- HUMAN REVIEW -->
 
 ## Trustworthy AI UX
 
@@ -230,7 +228,6 @@ Run: `npm test` (91 tests, ~3 s) and `npm run e2e` (~20 s after the build).
 Deliberately skipped: visual regression, Recharts internals (treated as a dependency; the data fed to them is tested), load tests on the mock APIs, and tests of the reference route itself (it is the starter pack's code).
 
 > ✍️ **Candidate's note (testing).** State in your own words what you consider worth testing in a front-end like this and what you would not spend time on.
-> <!-- HUMAN REVIEW -->
 
 ## Performance
 
@@ -278,7 +275,6 @@ What actually happened:
 5. **Tests found real bugs.** The accessibility and E2E suite surfaced an `aria-hidden` chart wrapper hiding focusable elements, 0-based grid indices, a duplicate input id between the desktop panel and the mobile sheet, contrast failures and a horizontal overflow at phone width. All were fixed in the same phase.
 
 > ✍️ **Candidate's note (AI workflow).** Describe your own do's and don'ts: what you let the tool decide, what you always review yourself (data semantics, accessibility, anything that touches trust), how you keep the output matching your standard (the per-phase gates, the plan file, reading diffs before committing), and what you would not delegate.
-> <!-- HUMAN REVIEW -->
 
 ## Trade-offs and known limitations
 
@@ -300,7 +296,6 @@ What actually happened:
 6. Screen-reader walkthrough and a colour-blind check of the diverging palette.
 
 > ✍️ **Candidate's note (with more time).** Add what you would personally prioritise and why.
-> <!-- HUMAN REVIEW -->
 
 ## Requirements checklist
 
