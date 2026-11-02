@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertsPanel } from "@/features/alerts/components/AlertsPanel";
 import { HeatmapChart } from "../charts/HeatmapChart";
 import { MarketsMapLazy } from "../charts/MarketsMapLazy";
 import { RadarCompareChart } from "../charts/RadarCompareChart";
@@ -54,8 +55,11 @@ export function AnalystView({ api }: { api: DashboardSelectionApi }) {
           onCompareChange={setCompare}
         />
       </div>
-      <div className="lg:col-span-12">
+      <div className="lg:col-span-7">
         <ProductBreakdown scope={scope} period={period} onSelectProduct={selectProduct} />
+      </div>
+      <div className="lg:col-span-5">
+        <AlertsPanel period={period} onSelectMarket={selectMarket} />
       </div>
     </div>
   );

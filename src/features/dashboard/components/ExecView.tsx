@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertsPanel } from "@/features/alerts/components/AlertsPanel";
 import { MarketsMapLazy } from "../charts/MarketsMapLazy";
 import { TimeSeriesChart } from "../charts/TimeSeriesChart";
 import type { DashboardSelectionApi } from "../hooks/useDashboardSelection";
@@ -35,6 +36,7 @@ export function ExecView({ api }: { api: DashboardSelectionApi }) {
           onSelectPeriod={(marketId, p) => focus({ marketId, productId: scope.productId }, p)}
         />
         <TopMovers scope={scope} period={period} onSelectMarket={selectMarket} />
+        <AlertsPanel period={period} onSelectMarket={selectMarket} compact />
       </div>
       <div className="lg:col-span-7">
         <TimeSeriesChart scope={scope} period={period} onSelectPeriod={setPeriod} />

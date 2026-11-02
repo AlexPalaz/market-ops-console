@@ -4,6 +4,8 @@ import { useMemo } from "react";
 import { ActivityIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/shared/StatusBadge";
+import { AlertBadge } from "@/features/alerts/components/AlertBadge";
+import { useAlertHits } from "@/features/alerts/hooks/useAlertHits";
 import { useData } from "@/data/DataProvider";
 import { formatPercent, formatPeriod } from "@/domain/format";
 import { anomaliesInScope, marketsAtRisk } from "@/domain/selectors";
@@ -24,6 +26,7 @@ export function RiskList({
   const index = useData();
   const risks = useMemo(() => marketsAtRisk(index, scope, period), [index, scope, period]);
   const anomalies = useMemo(() => anomaliesInScope(index, scope), [index, scope]);
+  const alertHits = useAlertHits(period);
 
   return (
     <Card className="gap-2">
@@ -41,7 +44,10 @@ export function RiskList({
                   className="hover:bg-muted focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-left focus-visible:ring-3 focus-visible:outline-none"
                 >
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-medium">{s.market.name}</span>
+                    <span className="flex items-center gap-1.5 text-sm font-medium">
+                      <span className="truncate">{s.market.name}</span>
+                      <AlertBadge hits={alertHits.byMarket.get(s.market.id)} />
+                    </span>
                     <span className="text-muted-foreground block text-xs">
                       {formatPercent(s.kpis.growthPct, { signed: true })} YoY · attainment{" "}
                       {formatPercent(s.kpis.forecastAttainmentPct)}

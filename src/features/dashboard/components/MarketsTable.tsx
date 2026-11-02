@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/table";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { StatusBadge } from "@/components/shared/StatusBadge";
+import { AlertBadge } from "@/features/alerts/components/AlertBadge";
+import { useAlertHits } from "@/features/alerts/hooks/useAlertHits";
 import { useData } from "@/data/DataProvider";
 import { formatCurrencyExact, formatInteger, formatPercent, formatPeriod } from "@/domain/format";
 import { marketSnapshots, type MarketSnapshot } from "@/domain/selectors";
@@ -85,6 +87,7 @@ export function MarketsTable({
   const [sortKey, setSortKey] = useState<SortKey>("revenue");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [statusFilter, setStatusFilter] = useState<Status[]>([]);
+  const alertHits = useAlertHits(period);
 
   const rows = useMemo(() => {
     const all = marketSnapshots(index, scope, period);
@@ -194,7 +197,10 @@ export function MarketsTable({
                       >
                         {s.market.name}
                       </button>
-                      <span className="text-muted-foreground block text-xs">{s.regionName}</span>
+                      <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                        {s.regionName}
+                        <AlertBadge hits={alertHits.byMarket.get(s.market.id)} />
+                      </span>
                     </TableCell>
                     <TableCell>
                       <StatusBadge status={s.status} />
