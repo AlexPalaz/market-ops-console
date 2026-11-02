@@ -83,7 +83,7 @@ export function ProductBreakdown({
                 className="cursor-pointer"
                 onClick={() => onSelectProduct(selected ? null : product.id)}
               >
-                <TableCell className={cn("font-medium", selected && "pl-2")}>
+                <TableCell className="font-medium">
                   <button
                     type="button"
                     aria-pressed={selected}

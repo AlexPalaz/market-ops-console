@@ -68,9 +68,9 @@ const COLUMNS: { key: SortKey; label: string; numeric?: boolean; cls?: string }[
   { key: "revenue", label: "Revenue", numeric: true },
   { key: "growthPct", label: "Growth YoY", numeric: true },
   { key: "forecastAttainmentPct", label: "Attainment", numeric: true },
-  { key: "variance", label: "Variance vs forecast", numeric: true, cls: "hidden @xl:table-cell" },
-  { key: "sharePct", label: "Share", numeric: true, cls: "hidden @2xl:table-cell" },
-  { key: "units", label: "Units", numeric: true, cls: "hidden @3xl:table-cell" },
+  { key: "variance", label: "Variance", numeric: true, cls: "hidden @2xl:table-cell" },
+  { key: "sharePct", label: "Share", numeric: true, cls: "hidden @3xl:table-cell" },
+  { key: "units", label: "Units", numeric: true, cls: "hidden @4xl:table-cell" },
 ];
 const COL = Object.fromEntries(COLUMNS.map((c) => [c.key, c.cls ?? ""])) as Record<SortKey, string>;
 
@@ -204,7 +204,7 @@ export function MarketsTable({
                     className="cursor-pointer"
                     onClick={() => onSelectMarket(s.market.id)}
                   >
-                    <TableCell className={cn("font-medium", selected && "pl-2")}>
+                    <TableCell className="font-medium">
                       <button
                         type="button"
                         className="decoration-rule focus-visible:ring-ring rounded-sm text-left underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:outline-none"
