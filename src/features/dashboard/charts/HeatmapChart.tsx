@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { ChartFrame } from "@/components/shared/ChartFrame";
+import { Section } from "@/components/shared/Section";
 import {
   Table,
   TableBody,
@@ -18,10 +18,12 @@ import { heatmapMatrix, type HeatmapMetric } from "@/domain/selectors";
 import type { Period, Scope } from "@/domain/types";
 import { makeColorScale, METRICS } from "@/lib/metrics";
 import { cn } from "@/lib/utils";
+import { useHoverStore } from "../state/hoverStore";
+import { RampLegend } from "./theme";
 
-const CELL_W = 30;
-const CELL_H = 22;
-const LABEL_W = 110;
+const CELL = 24;
+const GAP = 2;
+const LABEL_W = 112;
 const HEADER_H = 40;
 
 const METRIC_LABEL: Record<HeatmapMetric, string> = {
@@ -30,9 +32,9 @@ const METRIC_LABEL: Record<HeatmapMetric, string> = {
 };
 
 /**
- * Markets x periods heat map on a diverging scale centred on zero. Cells are
- * focusable grid cells: arrow keys move, Enter/Space selects the market and
- * period for the whole dashboard.
+ * Markets × months on a diverging scale centred on zero. Cells are grid cells:
+ * arrow keys move, Enter/Space selects the market and month for the whole
+ * dashboard. Hover is shared with the time series through the hover store.
  */
 export function HeatmapChart({
   scope,
@@ -43,14 +45,16 @@ export function HeatmapChart({
   scope: Scope;
   period: Period;
   onSelectCell: (marketId: string, period: Period) => void;
-  /** Section number shown as an eyebrow. */
   index?: string;
 }) {
   const index = useData();
   const [metric, setMetric] = useState<HeatmapMetric>("growthPct");
-  const [hover, setHover] = useState<{ marketId: string; period: Period } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const titleId = useId();
+  const hoverPeriod = useHoverStore((s) => s.period);
+  const hoverMarket = useHoverStore((s) => s.marketId);
+  const setHover = useHoverStore((s) => s.setHover);
+  const clearHover = useHoverStore((s) => s.clear);
 
   const matrix = useMemo(() => heatmapMatrix(index, scope, metric), [index, scope, metric]);
   const scale = useMemo(
@@ -62,15 +66,16 @@ export function HeatmapChart({
     [matrix],
   );
 
-  const width = LABEL_W + matrix.periods.length * CELL_W;
-  const height = HEADER_H + matrix.rows.length * CELL_H;
+  const width = LABEL_W + matrix.periods.length * CELL;
+  const height = HEADER_H + matrix.rows.length * CELL;
   const fmt = (v: number | null) => formatPercent(v, { signed: true });
 
-  const hovered = hover
-    ? matrix.rows
-        .find((r) => r.marketId === hover.marketId)
-        ?.cells.find((c) => c.period === hover.period)
-    : undefined;
+  const hovered =
+    hoverPeriod && hoverMarket
+      ? matrix.rows
+          .find((r) => r.marketId === hoverMarket)
+          ?.cells.find((c) => c.period === hoverPeriod)
+      : undefined;
 
   const onKeyDown = (e: KeyboardEvent<SVGSVGElement>) => {
     const target = e.target as SVGElement;
@@ -117,13 +122,16 @@ export function HeatmapChart({
       ? `${METRIC_LABEL[metric]} across ${matrix.rows.length} markets and ${matrix.periods.length} months. Lowest: ${extremes.lo.name} in ${formatPeriod(extremes.lo.period)} at ${fmt(extremes.lo.value)}. Highest: ${extremes.hi.name} in ${formatPeriod(extremes.hi.period)} at ${fmt(extremes.hi.value)}.`
       : undefined;
 
+  const colX = (c: number) => LABEL_W + c * CELL + CELL / 2;
+  const rowY = (r: number) => HEADER_H + r * CELL + CELL / 2;
+
   return (
-    <ChartFrame
-      index={sectionIndex}
+    <Section
       title="Markets × months"
+      index={sectionIndex}
       description={`${METRIC_LABEL[metric]} per market and month, red below zero and green above. Click or press Enter on a cell to focus that market and month.`}
       summary={summary}
-      minHeight={height + 48}
+      minHeight={height + 40}
       actions={
         <ToggleGroup
           type="single"
@@ -152,42 +160,35 @@ export function HeatmapChart({
           aria-rowcount={matrix.rows.length + 1}
           aria-colcount={matrix.periods.length}
           onKeyDown={onKeyDown}
-          onMouseLeave={() => setHover(null)}
+          onMouseLeave={clearHover}
           className="max-w-full select-none"
         >
           <title id={titleId}>{`${METRIC_LABEL[metric]} heat map`}</title>
-          <defs>
-            <pattern
-              id="heatmap-nodata"
-              width="6"
-              height="6"
-              patternUnits="userSpaceOnUse"
-              patternTransform="rotate(45)"
-            >
-              <line x1="0" y1="0" x2="0" y2="6" stroke="var(--no-data)" strokeWidth="2" />
-            </pattern>
-          </defs>
           <g role="row" aria-rowindex={1}>
             {matrix.periods.map((p, c) => {
               const [y, m] = p.split("-");
               const showYear = m === "01" || c === 0;
+              const active = p === period;
+              const hot = p === hoverPeriod;
               return (
                 <text
                   key={p}
                   role="columnheader"
-                  x={LABEL_W + c * CELL_W + CELL_W / 2}
+                  x={colX(c)}
                   y={HEADER_H - 8}
                   textAnchor="middle"
-                  fontSize={10}
-                  fill={p === period ? "var(--foreground)" : "var(--muted-foreground)"}
-                  fontWeight={p === period ? 600 : 400}
+                  fontSize={10.5}
+                  fontFamily="var(--font-geist-mono)"
+                  fill={active || hot ? "var(--ink)" : "var(--ink-soft)"}
+                  fontWeight={active ? 600 : 400}
+                  textDecoration={hot ? "underline" : undefined}
                 >
                   {showYear ? (
                     <>
-                      <tspan x={LABEL_W + c * CELL_W + CELL_W / 2} dy={-12}>
+                      <tspan x={colX(c)} dy={-13} fontSize={10} fill="var(--ink-soft)">
                         {y}
                       </tspan>
-                      <tspan x={LABEL_W + c * CELL_W + CELL_W / 2} dy={12}>
+                      <tspan x={colX(c)} dy={13}>
                         {formatPeriod(p).slice(0, 3)}
                       </tspan>
                     </>
@@ -198,86 +199,87 @@ export function HeatmapChart({
               );
             })}
           </g>
-          {matrix.rows.map((row, r) => (
-            <g key={row.marketId} role="row" aria-rowindex={r + 2}>
-              <text
-                role="rowheader"
-                x={LABEL_W - 8}
-                y={HEADER_H + r * CELL_H + CELL_H / 2}
-                textAnchor="end"
-                dominantBaseline="middle"
-                fontSize={11}
-                fill={
-                  row.marketId === scope.marketId ? "var(--foreground)" : "var(--muted-foreground)"
-                }
-                fontWeight={row.marketId === scope.marketId ? 600 : 400}
-              >
-                {row.marketName}
-              </text>
-              {row.cells.map((cell, c) => {
-                const selected = cell.marketId === scope.marketId && cell.period === period;
-                const isHover = hover?.marketId === cell.marketId && hover.period === cell.period;
-                return (
-                  <rect
-                    key={cell.period}
-                    role="gridcell"
-                    tabIndex={r === 0 && c === 0 ? 0 : -1}
-                    data-r={r}
-                    data-c={c}
-                    aria-label={`${row.marketName}, ${formatPeriod(cell.period)}: ${fmt(cell.value)}`}
-                    aria-selected={selected || undefined}
-                    x={LABEL_W + c * CELL_W + 1}
-                    y={HEADER_H + r * CELL_H + 1}
-                    width={CELL_W - 2}
-                    height={CELL_H - 2}
-                    rx={2}
-                    fill={cell.value === null ? "url(#heatmap-nodata)" : scale.color(cell.value)}
-                    stroke={
-                      selected ? "var(--foreground)" : isHover ? "var(--ring)" : "transparent"
-                    }
-                    strokeWidth={selected ? 2 : 1.5}
-                    className="focus-visible:stroke-ring cursor-pointer outline-none focus-visible:stroke-[2px]"
-                    onMouseEnter={() => setHover({ marketId: cell.marketId, period: cell.period })}
-                    onFocus={() => setHover({ marketId: cell.marketId, period: cell.period })}
-                    onClick={() => onSelectCell(cell.marketId, cell.period)}
-                  />
-                );
-              })}
-            </g>
-          ))}
+          {matrix.rows.map((row, r) => {
+            const rowActive = row.marketId === scope.marketId;
+            const rowHot = row.marketId === hoverMarket;
+            return (
+              <g key={row.marketId} role="row" aria-rowindex={r + 2}>
+                <text
+                  role="rowheader"
+                  x={LABEL_W - 10}
+                  y={rowY(r)}
+                  textAnchor="end"
+                  dominantBaseline="middle"
+                  fontSize={11}
+                  fontFamily="var(--font-sans)"
+                  fill={rowActive || rowHot ? "var(--ink)" : "var(--ink-soft)"}
+                  fontWeight={rowActive ? 600 : 400}
+                >
+                  {row.marketName}
+                </text>
+                {row.cells.map((cell, c) => {
+                  const selected = cell.marketId === scope.marketId && cell.period === period;
+                  const isHover = hoverMarket === cell.marketId && hoverPeriod === cell.period;
+                  const inCross =
+                    !isHover && (hoverMarket === cell.marketId || hoverPeriod === cell.period);
+                  return (
+                    <rect
+                      key={cell.period}
+                      role="gridcell"
+                      tabIndex={r === 0 && c === 0 ? 0 : -1}
+                      data-r={r}
+                      data-c={c}
+                      aria-label={`${row.marketName}, ${formatPeriod(cell.period)}: ${fmt(cell.value)}`}
+                      aria-selected={selected || undefined}
+                      x={LABEL_W + c * CELL + GAP / 2}
+                      y={HEADER_H + r * CELL + GAP / 2}
+                      width={CELL - GAP}
+                      height={CELL - GAP}
+                      rx={2}
+                      fill={cell.value === null ? "var(--no-data)" : scale.color(cell.value)}
+                      fillOpacity={hoverMarket || hoverPeriod ? (isHover || inCross ? 1 : 0.6) : 1}
+                      stroke={selected ? "var(--signal)" : isHover ? "var(--ink)" : "transparent"}
+                      strokeWidth={selected ? 2 : 1.5}
+                      className="focus-visible:stroke-ink cursor-pointer transition-[fill-opacity] duration-150 outline-none focus-visible:stroke-[2px]"
+                      onMouseEnter={() => setHover(cell.period, cell.marketId)}
+                      onFocus={() => setHover(cell.period, cell.marketId)}
+                      onClick={() => onSelectCell(cell.marketId, cell.period)}
+                    />
+                  );
+                })}
+              </g>
+            );
+          })}
         </svg>
       </div>
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground">{fmt(scale.min)}</span>
-          <span
-            className="h-2.5 w-32 rounded-sm border"
-            style={{ background: scale.gradient }}
-            aria-hidden
-          />
-          <span className="text-muted-foreground">{fmt(scale.max)}</span>
-          <span className="text-muted-foreground ml-2 inline-flex items-center gap-1">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <RampLegend
+          gradient={scale.gradient}
+          min={fmt(scale.min)}
+          max={fmt(scale.max)}
+          extra={
             <span
-              className="inline-block size-3 rounded-sm border"
-              style={{
-                background:
-                  "repeating-linear-gradient(45deg, var(--no-data) 0 2px, transparent 2px 5px)",
-              }}
+              className="text-ink-soft inline-flex items-center gap-1.5 text-[11px]"
               aria-hidden
-            />
-            no data
-          </span>
-        </div>
+            >
+              <span
+                className="inline-block size-2.5 rounded-sm"
+                style={{ background: "var(--no-data)" }}
+              />
+              no data
+            </span>
+          }
+        />
         <p
-          className={cn("min-h-4 font-medium", !hovered && "text-muted-foreground")}
+          className={cn("numeral min-h-5 text-[12px]", !hovered && "text-ink-soft")}
           aria-live="polite"
         >
-          {hovered && hover
-            ? `${matrix.rows.find((r) => r.marketId === hover.marketId)?.marketName}, ${formatPeriod(hover.period)}: ${fmt(hovered.value)}`
+          {hovered && hoverMarket && hoverPeriod
+            ? `${matrix.rows.find((r) => r.marketId === hoverMarket)?.marketName} · ${formatPeriod(hoverPeriod)} · ${fmt(hovered.value)}`
             : "Hover or focus a cell for its value"}
         </p>
       </div>
-    </ChartFrame>
+    </Section>
   );
 }
 
@@ -308,7 +310,7 @@ function HeatmapTable({
           <TableRow key={row.marketId}>
             <TableCell className="font-medium whitespace-nowrap">{row.marketName}</TableCell>
             {row.cells.map((c) => (
-              <TableCell key={c.period} className="text-right">
+              <TableCell key={c.period} className="numeral text-right">
                 {fmt(c.value)}
               </TableCell>
             ))}

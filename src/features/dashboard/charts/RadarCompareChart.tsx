@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 import {
-  Legend,
   PolarAngleAxis,
   PolarGrid,
   PolarRadiusAxis,
@@ -11,7 +10,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
-import { ChartFrame } from "@/components/shared/ChartFrame";
+import { Section } from "@/components/shared/Section";
 import {
   Table,
   TableBody,
@@ -27,6 +26,7 @@ import { formatCompact, formatCurrency, formatPercent, formatPeriod } from "@/do
 import { radarData, type RadarAxis, type RadarData } from "@/domain/selectors";
 import type { Period, Scope } from "@/domain/types";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { chart, ChartLegend, ChartTooltipBox } from "./theme";
 
 const AXIS_LABEL: Record<RadarAxis, string> = {
   revenue: "Revenue",
@@ -36,14 +36,6 @@ const AXIS_LABEL: Record<RadarAxis, string> = {
   units: "Units",
 };
 
-const CAT_COLORS = [
-  "var(--cat-1)",
-  "var(--cat-2)",
-  "var(--cat-3)",
-  "var(--cat-4)",
-  "var(--cat-5)",
-  "var(--cat-6)",
-];
 const MAX_COMPARE = 6;
 
 function formatAxis(axis: RadarAxis, v: number | null): string {
@@ -60,11 +52,7 @@ function formatAxis(axis: RadarAxis, v: number | null): string {
   }
 }
 
-/**
- * Picks sensible defaults when the URL has no `compare`: the markets of the
- * current region (or the market's siblings), or the four regions at portfolio
- * level.
- */
+/** Sensible defaults when the URL has no `compare`. */
 export function defaultCompare(index: ReturnType<typeof useData>, scope: Scope): string[] {
   if (scope.marketId) {
     const market = index.marketsById.get(scope.marketId);
@@ -95,7 +83,6 @@ export function RadarCompareChart({
   period: Period;
   compare: string[];
   onCompareChange: (ids: string[]) => void;
-  /** Section number shown as an eyebrow. */
   index?: string;
 }) {
   const index = useData();
@@ -103,8 +90,6 @@ export function RadarCompareChart({
   const ids = compare.length ? compare : defaultCompare(index, scope);
   const data = useMemo(() => radarData(index, ids, period), [index, ids, period]);
 
-  // Candidate chips: regions at portfolio level, otherwise the region's markets
-  // plus the regions themselves so mixed comparisons remain possible.
   const candidates = useMemo(() => {
     const regionId = scope.regionId;
     const markets = regionId ? (index.marketsByRegion.get(regionId) ?? []) : index.markets;
@@ -124,94 +109,102 @@ export function RadarCompareChart({
   const summary = `${data.series.map((s) => s.entity.name).join(", ")} compared on ${data.axes.map((a) => AXIS_LABEL[a]).join(", ")} for ${formatPeriod(period)}. Values are scaled 0 to 100 between the lowest and highest of the compared set.`;
 
   return (
-    <ChartFrame
-      index={sectionIndex}
+    <Section
       title="Compare across KPIs"
+      index={sectionIndex}
       description="Each axis is scaled 0–100 between the lowest and highest value among the compared entities, so shapes are comparable even though units differ. Share is only defined for markets."
       summary={summary}
-      minHeight={340}
+      minHeight={360}
       table={<RadarTable data={data} period={period} />}
     >
-      <div className="mb-2">
-        <ToggleGroup
-          type="multiple"
-          size="sm"
-          variant="outline"
-          value={ids}
-          onValueChange={(v) => onCompareChange(v.slice(0, MAX_COMPARE))}
-          aria-label="Entities to compare"
-          className="flex flex-wrap gap-1"
-        >
-          {candidates.map((c) => (
-            <ToggleGroupItem
-              key={c.id}
-              value={c.id}
-              disabled={!ids.includes(c.id) && ids.length >= MAX_COMPARE}
-              className="text-xs"
-            >
-              {c.name}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
-      </div>
+      <ToggleGroup
+        type="multiple"
+        size="sm"
+        variant="outline"
+        value={ids}
+        onValueChange={(v) => onCompareChange(v.slice(0, MAX_COMPARE))}
+        aria-label="Entities to compare"
+        className="mb-3"
+      >
+        {candidates.map((c) => (
+          <ToggleGroupItem
+            key={c.id}
+            value={c.id}
+            disabled={!ids.includes(c.id) && ids.length >= MAX_COMPARE}
+            className="text-[12px]"
+          >
+            {c.name}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
       {data.series.length === 0 ? (
-        <p className="text-muted-foreground py-10 text-center text-sm">
+        <p className="text-ink-soft py-10 text-center text-[13px]">
           Pick at least one region or market to compare.
         </p>
       ) : (
-        <ResponsiveContainer width="100%" height={340}>
-          <RadarChart data={chartData} outerRadius="72%">
-            <PolarGrid stroke="var(--border)" />
-            <PolarAngleAxis
-              dataKey="axis"
-              tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
-            />
-            <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
-            <Tooltip
-              content={({ active, payload, label }) => {
-                if (!active || !payload?.length) return null;
-                const axis = data.axes.find((a) => AXIS_LABEL[a] === label);
-                return (
-                  <div className="bg-popover text-popover-foreground rounded-md border px-3 py-2 text-xs shadow-md">
-                    <p className="mb-1 font-medium">{String(label)}</p>
-                    {data.series.map((s, i) => (
-                      <p key={s.entity.id} className="flex items-center justify-between gap-4">
-                        <span className="inline-flex items-center gap-1.5">
+        <>
+          <ResponsiveContainer width="100%" height={300}>
+            <RadarChart data={chartData} outerRadius="74%">
+              <PolarGrid stroke={chart.rule} />
+              <PolarAngleAxis
+                dataKey="axis"
+                tick={{ fontSize: 10.5, fill: chart.inkSoft, fontFamily: chart.sans }}
+              />
+              <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
+              <Tooltip
+                isAnimationActive={false}
+                content={({ active, payload, label }) => {
+                  if (!active || !payload?.length) return null;
+                  const axis = data.axes.find((a) => AXIS_LABEL[a] === label);
+                  return (
+                    <ChartTooltipBox
+                      title={String(label)}
+                      rows={data.series.map((s, i) => ({
+                        label: s.entity.name,
+                        value: axis ? formatAxis(axis, s.raw[axis]) : "—",
+                        swatch: (
                           <span
-                            className="inline-block size-2 rounded-full"
-                            style={{ background: CAT_COLORS[i % CAT_COLORS.length] }}
+                            className="inline-block size-2 rounded-sm"
+                            style={{ background: chart.cat[i % chart.cat.length] }}
                             aria-hidden
                           />
-                          {s.entity.name}
-                        </span>
-                        <span className="font-medium">
-                          {axis ? formatAxis(axis, s.raw[axis]) : "—"}
-                        </span>
-                      </p>
-                    ))}
-                  </div>
-                );
-              }}
-            />
-            <Legend wrapperStyle={{ fontSize: 12 }} />
-            {data.series.map((s, i) => (
-              <Radar
-                key={s.entity.id}
-                name={s.entity.name}
-                dataKey={s.entity.id}
-                stroke={CAT_COLORS[i % CAT_COLORS.length]}
-                fill={CAT_COLORS[i % CAT_COLORS.length]}
-                fillOpacity={0.12}
-                strokeWidth={2}
-                dot={{ r: 3 }}
-                isAnimationActive={!reduceMotion}
-                animationDuration={700}
+                        ),
+                      }))}
+                    />
+                  );
+                }}
               />
-            ))}
-          </RadarChart>
-        </ResponsiveContainer>
+              {data.series.map((s, i) => (
+                <Radar
+                  key={s.entity.id}
+                  name={s.entity.name}
+                  dataKey={s.entity.id}
+                  stroke={chart.cat[i % chart.cat.length]}
+                  fill={chart.cat[i % chart.cat.length]}
+                  fillOpacity={0.08}
+                  strokeWidth={1.5}
+                  dot={{ r: 2.5, strokeWidth: 0 }}
+                  isAnimationActive={!reduceMotion}
+                  animationDuration={600}
+                />
+              ))}
+            </RadarChart>
+          </ResponsiveContainer>
+          <ChartLegend
+            className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1"
+            items={data.series.map((s, i) => ({
+              label: s.entity.name,
+              swatch: (
+                <span
+                  className="inline-block size-2 rounded-sm"
+                  style={{ background: chart.cat[i % chart.cat.length] }}
+                />
+              ),
+            }))}
+          />
+        </>
       )}
-    </ChartFrame>
+    </Section>
   );
 }
 
@@ -236,14 +229,13 @@ function RadarTable({ data, period }: { data: RadarData; period: Period }) {
         {data.series.map((s) => (
           <TableRow key={s.entity.id}>
             <TableCell className="font-medium">
-              {s.entity.name}{" "}
-              <span className="text-muted-foreground text-xs">({s.entity.kind})</span>
+              {s.entity.name} <span className="text-ink-soft text-[11px]">({s.entity.kind})</span>
             </TableCell>
             {data.axes.map((a) => (
-              <TableCell key={a} className="text-right">
+              <TableCell key={a} className="numeral text-right">
                 {formatAxis(a, s.raw[a])}
                 {s.normalized[a] !== null ? (
-                  <span className="text-muted-foreground block text-xs">
+                  <span className="text-ink-soft block text-[11px]">
                     scaled {Math.round(s.normalized[a]! * 100)}
                   </span>
                 ) : null}

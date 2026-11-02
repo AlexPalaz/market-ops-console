@@ -7,6 +7,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const MarketsMapLazy = dynamic(() => import("./MarketsMap").then((m) => m.MarketsMap), {
   ssr: false,
   loading: () => (
-    <Skeleton className="h-[480px] w-full rounded-xl" role="status" aria-label="Loading map" />
+    <Skeleton className="aspect-[960/470] w-full" role="status" aria-label="Loading map" />
   ),
 });

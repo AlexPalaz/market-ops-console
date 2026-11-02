@@ -6,15 +6,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 /**
  * Recharts is the largest dependency in the console (~165 KB gzipped). The
  * charts that use it load on demand so the initial bundle stays lean; the
- * tiles, map and tables render first, then the charts fill in.
+ * strip, map and tables render first, then the charts fill in.
  */
 const chartSkeleton = (height: number) => (
-  <Skeleton
-    className="w-full rounded-xl"
-    style={{ height }}
-    role="status"
-    aria-label="Loading chart"
-  />
+  <Skeleton className="w-full" style={{ height }} role="status" aria-label="Loading chart" />
 );
 
 export const TimeSeriesChartLazy = dynamic(
@@ -27,5 +22,8 @@ export const TimeSeriesChartLazy = dynamic(
 
 export const RadarCompareChartLazy = dynamic(
   () => import("./RadarCompareChart").then((m) => m.RadarCompareChart),
-  { ssr: false, loading: () => chartSkeleton(460) },
+  {
+    ssr: false,
+    loading: () => chartSkeleton(460),
+  },
 );
