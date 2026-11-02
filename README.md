@@ -343,6 +343,7 @@ Two things worth knowing if you read the numbers closely:
 | ![Analyst view](docs/screenshots/02-analyst-germany-march.png)        | ![Assistant evidence](docs/screenshots/03-assistant-evidence.png) |
 | ![Abstain and error](docs/screenshots/04-assistant-abstain-error.png) | ![Alert form](docs/screenshots/05-alert-form-validation.png)      |
 | ![Mobile](docs/screenshots/06-mobile-executive.png)                   | ![Mobile assistant](docs/screenshots/07-mobile-assistant.png)     |
+| ![Dark analyst](docs/screenshots/08-dark-analyst.png)                 |                                                                   |
 
 ## License
 
