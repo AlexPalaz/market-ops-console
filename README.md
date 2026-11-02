@@ -235,7 +235,13 @@ Run: `npm test` (91 tests, ~3 s) and `npm run e2e` (~20 s after the build).
 
 Deliberately skipped: visual regression, Recharts internals (treated as a dependency; the data fed to them is tested), load tests on the mock APIs, and tests of the reference route itself (it is the starter pack's code).
 
-> ✍️ **Candidate's note (testing).** State in your own words what you consider worth testing in a front-end like this and what you would not spend time on.
+> **Candidate's note (testing).**
+>
+> _What is worth testing here._ In this order: the pure logic first, because a wrong sum invalidates every chart that reads it, and selectors are the cheapest thing to test exhaustively. Then the boundaries, where dirty input arrives: the SSE parser against chunks split and merged in every way, the Zod schemas for the dataset and the stream, the URL parsing and the rules that keep a selection coherent. Then the flows that touch the user's trust: stop keeps the partial answer and ignores late tokens, a failed save rolls back and says so, a citation really moves the dashboard to the cited market and month. Last, one end-to-end happy path on the production build plus axe in both themes, because that is the only test that exercises the real bundle, real hydration and real keyboard. The pyramid is deliberately bottom-heavy: 40 unit tests run in a second and catch most regressions; the 10 E2E tests catch the rest.
+>
+> _What I deliberately skipped._ Pixel tests on charts: they fail on every font or antialiasing change and prove nothing about correctness, which the data tables and the selector tests already cover. Testing Recharts or Radix internals: they are dependencies, I test what I feed them and what the user can reach. Chasing 100% coverage: the uncovered lines are wiring, and a coverage number is not a quality number. Load tests on an in-memory mock. Tests of the reference route itself, which is the starter pack's code.
+>
+> _What I would add as the product grows._ Visual regression on whole screens in known states, compared as images, to catch layout and theme regressions that no unit test sees. Contract tests on the SSE endpoint once a real model sits behind it. A performance budget in CI (Lighthouse CI on bundle size, LCP, INP) so the numbers in this README stop being a snapshot and become a gate.
 
 ## Performance
 
