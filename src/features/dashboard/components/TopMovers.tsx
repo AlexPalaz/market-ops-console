@@ -57,11 +57,11 @@ export function TopMovers({
   );
 
   return (
-    <Card className="gap-2">
+    <Card className="@container gap-2">
       <CardHeader>
         <CardTitle className="text-sm font-semibold">Top movers, year on year</CardTitle>
       </CardHeader>
-      <CardContent className="grid gap-3 sm:grid-cols-2">
+      <CardContent className="grid gap-3 @lg:grid-cols-2">
         <div>
           <p className="text-muted-foreground mb-1 px-2 text-xs font-medium">Growing</p>
           {gainers.length ? (
