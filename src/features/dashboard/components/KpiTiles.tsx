@@ -42,7 +42,7 @@ interface TileProps {
 
 function Tile({ label, value, hint, trend, tone, compact }: TileProps) {
   return (
-    <Card className={cn("gap-1 px-4", compact ? "py-2.5" : "py-3")}>
+    <Card className={cn("min-w-0 gap-1 px-4", compact ? "py-2.5" : "py-3")}>
       <div className="flex items-start justify-between gap-2">
         <p className="text-muted-foreground text-xs font-medium">{label}</p>
         {trend ? <Sparkline values={trend} className="text-muted-foreground/70" /> : null}
@@ -103,7 +103,11 @@ export function KpiTiles({
         : "text-status-on-track";
 
   return (
-    <div className="grid grid-cols-2 gap-3 xl:grid-cols-4" role="list" aria-label="Headline KPIs">
+    <div
+      className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4"
+      role="list"
+      aria-label="Headline KPIs"
+    >
       <div role="listitem">
         <Tile
           compact={compact}

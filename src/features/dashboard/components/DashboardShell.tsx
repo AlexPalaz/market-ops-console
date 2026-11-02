@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MessageSquareTextIcon, PanelRightCloseIcon, PanelRightOpenIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useData } from "@/data/DataProvider";
 import { formatPeriodLong } from "@/domain/format";
@@ -39,16 +40,16 @@ export function DashboardShell() {
     <div className="flex min-h-screen flex-col">
       <header
         className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-20 border-b backdrop-blur"
-        style={{ height: HEADER_H }}
+        style={{ minHeight: HEADER_H }}
       >
-        <div className="mx-auto flex h-full w-full max-w-[1800px] flex-wrap items-center gap-x-4 gap-y-2 px-4">
+        <div className="mx-auto flex min-h-[inherit] w-full max-w-[1800px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2">
           <div className="flex min-w-0 items-baseline gap-2">
             <span className="text-sm font-semibold tracking-tight">Market Ops Console</span>
             <span className="text-muted-foreground hidden text-xs sm:inline">
               Data as of {formatPeriodLong(index.latestPeriod)}
             </span>
           </div>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto">
             <PeriodSelect value={selection.period} onChange={setPeriod} />
             <ViewToggle value={selection.view} onChange={setView} />
             <Button
@@ -71,7 +72,9 @@ export function DashboardShell() {
               <SheetContent side="right" className="w-full p-2 sm:max-w-md">
                 <SheetTitle className="sr-only">Assistant</SheetTitle>
                 <div className="h-full pt-8">
-                  <AssistantPanel onFollowCitation={followCitation} />
+                  <ErrorBoundary label="The assistant">
+                    <AssistantPanel onFollowCitation={followCitation} />
+                  </ErrorBoundary>
                 </div>
               </SheetContent>
             </Sheet>
@@ -99,7 +102,9 @@ export function DashboardShell() {
             </p>
           </div>
 
-          {selection.view === "exec" ? <ExecView api={api} /> : <AnalystView api={api} />}
+          <ErrorBoundary label="The dashboard">
+            {selection.view === "exec" ? <ExecView api={api} /> : <AnalystView api={api} />}
+          </ErrorBoundary>
         </main>
 
         {panelOpen ? (
@@ -108,7 +113,9 @@ export function DashboardShell() {
               className="sticky"
               style={{ top: HEADER_H + 16, height: `calc(100vh - ${HEADER_H + 32}px)` }}
             >
-              <AssistantPanel onFollowCitation={followCitation} />
+              <ErrorBoundary label="The assistant">
+                <AssistantPanel onFollowCitation={followCitation} />
+              </ErrorBoundary>
             </div>
           </aside>
         ) : null}

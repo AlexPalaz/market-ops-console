@@ -60,7 +60,7 @@
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted-foreground: oklch(0.5 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
@@ -138,11 +138,11 @@
 
 :root {
   /* Semantic status (paired with icons + text everywhere; never colour alone) */
-  --status-on-track: oklch(0.62 0.17 150);
+  --status-on-track: oklch(0.45 0.14 150);
   --status-on-track-soft: oklch(0.96 0.04 150);
-  --status-at-risk: oklch(0.72 0.17 70);
+  --status-at-risk: oklch(0.47 0.13 65);
   --status-at-risk-soft: oklch(0.97 0.05 80);
-  --status-off-track: oklch(0.58 0.21 25);
+  --status-off-track: oklch(0.48 0.19 25);
   --status-off-track-soft: oklch(0.96 0.04 20);
 
   /* Time-series lines */

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent, type KeyboardEvent } from "react";
+import { useId, useState, type FormEvent, type KeyboardEvent } from "react";
 import { SendHorizonalIcon, SquareIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -14,6 +14,7 @@ export function Composer({
   isGenerating: boolean;
 }) {
   const [value, setValue] = useState("");
+  const inputId = useId();
 
   const submit = (e?: FormEvent) => {
     e?.preventDefault();
@@ -32,11 +33,11 @@ export function Composer({
 
   return (
     <form onSubmit={submit} className="flex items-end gap-2">
-      <label htmlFor="assistant-question" className="sr-only">
+      <label htmlFor={inputId} className="sr-only">
         Ask about the portfolio
       </label>
       <textarea
-        id="assistant-question"
+        id={inputId}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={onKeyDown}

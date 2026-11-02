@@ -2,7 +2,7 @@
 
 import { AlertsPanel } from "@/features/alerts/components/AlertsPanel";
 import { MarketsMapLazy } from "../charts/MarketsMapLazy";
-import { TimeSeriesChart } from "../charts/TimeSeriesChart";
+import { TimeSeriesChartLazy as TimeSeriesChart } from "../charts/lazy";
 import type { DashboardSelectionApi } from "../hooks/useDashboardSelection";
 import { KpiTiles } from "./KpiTiles";
 import { ProductBreakdown } from "./ProductBreakdown";
@@ -15,7 +15,7 @@ export function ExecView({ api }: { api: DashboardSelectionApi }) {
   const { scope, period, metric } = selection;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-12">
+    <div className="grid gap-4 lg:grid-cols-12 [&>*]:min-w-0">
       <div className="lg:col-span-12">
         <KpiTiles scope={scope} period={period} />
       </div>

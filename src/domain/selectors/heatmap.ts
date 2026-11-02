@@ -1,7 +1,7 @@
 import type { DataIndex } from "../dataIndex";
 import type { Period, Scope } from "../types";
 import { ratioPct } from "./aggregate";
-import { marketsInScope } from "./scope";
+import { marketsInScope, regionOf } from "./scope";
 import { timeSeries } from "./timeseries";
 
 export type HeatmapMetric = "variancePct" | "growthPct";
@@ -41,17 +41,19 @@ export function heatmapMatrix(
   metric: HeatmapMetric = "growthPct",
 ): HeatmapMatrix {
   let absMax = 0;
-  const rows: HeatmapRow[] = marketsInScope(index, { regionId: scope.regionId }).map((market) => {
-    const series = timeSeries(index, { marketId: market.id, productId: scope.productId });
-    const cells = series.map<HeatmapCell>((pt) => {
-      const value =
-        metric === "variancePct"
-          ? ratioPct(pt.actual - pt.forecast, pt.forecast)
-          : ratioPct(pt.actual - pt.priorYear, pt.priorYear);
-      if (value !== null) absMax = Math.max(absMax, Math.abs(value));
-      return { marketId: market.id, period: pt.period, value };
-    });
-    return { marketId: market.id, marketName: market.name, cells };
-  });
+  const rows: HeatmapRow[] = marketsInScope(index, { regionId: regionOf(index, scope) }).map(
+    (market) => {
+      const series = timeSeries(index, { marketId: market.id, productId: scope.productId });
+      const cells = series.map<HeatmapCell>((pt) => {
+        const value =
+          metric === "variancePct"
+            ? ratioPct(pt.actual - pt.forecast, pt.forecast)
+            : ratioPct(pt.actual - pt.priorYear, pt.priorYear);
+        if (value !== null) absMax = Math.max(absMax, Math.abs(value));
+        return { marketId: market.id, period: pt.period, value };
+      });
+      return { marketId: market.id, marketName: market.name, cells };
+    },
+  );
   return { metric, periods: index.periods, rows, absMax };
 }

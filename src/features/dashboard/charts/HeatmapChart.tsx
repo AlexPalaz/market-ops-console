@@ -145,7 +145,7 @@ export function HeatmapChart({
           height={height}
           role="grid"
           aria-labelledby={titleId}
-          aria-rowcount={matrix.rows.length}
+          aria-rowcount={matrix.rows.length + 1}
           aria-colcount={matrix.periods.length}
           onKeyDown={onKeyDown}
           onMouseLeave={() => setHover(null)}
@@ -163,7 +163,7 @@ export function HeatmapChart({
               <line x1="0" y1="0" x2="0" y2="6" stroke="var(--no-data)" strokeWidth="2" />
             </pattern>
           </defs>
-          <g role="row" aria-rowindex={0}>
+          <g role="row" aria-rowindex={1}>
             {matrix.periods.map((p, c) => {
               const [y, m] = p.split("-");
               const showYear = m === "01" || c === 0;
@@ -195,7 +195,7 @@ export function HeatmapChart({
             })}
           </g>
           {matrix.rows.map((row, r) => (
-            <g key={row.marketId} role="row" aria-rowindex={r + 1}>
+            <g key={row.marketId} role="row" aria-rowindex={r + 2}>
               <text
                 role="rowheader"
                 x={LABEL_W - 8}

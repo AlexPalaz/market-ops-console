@@ -3,8 +3,8 @@
 import { AlertsPanel } from "@/features/alerts/components/AlertsPanel";
 import { HeatmapChart } from "../charts/HeatmapChart";
 import { MarketsMapLazy } from "../charts/MarketsMapLazy";
-import { RadarCompareChart } from "../charts/RadarCompareChart";
-import { TimeSeriesChart } from "../charts/TimeSeriesChart";
+import { RadarCompareChartLazy as RadarCompareChart } from "../charts/lazy";
+import { TimeSeriesChartLazy as TimeSeriesChart } from "../charts/lazy";
 import type { DashboardSelectionApi } from "../hooks/useDashboardSelection";
 import { KpiTiles } from "./KpiTiles";
 import { MarketsTable } from "./MarketsTable";
@@ -16,7 +16,7 @@ export function AnalystView({ api }: { api: DashboardSelectionApi }) {
   const { scope, period, metric, compare } = selection;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-12">
+    <div className="grid gap-4 lg:grid-cols-12 [&>*]:min-w-0">
       <div className="lg:col-span-12">
         <KpiTiles scope={scope} period={period} compact />
       </div>

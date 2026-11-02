@@ -82,6 +82,13 @@ export function scopeLabel(index: DataIndex, scope: Scope): string {
   return parts.join(" · ");
 }
 
+/** The region a scope sits in: explicit, or implied by its market. */
+export function regionOf(index: DataIndex, scope: Scope): string | undefined {
+  if (scope.regionId) return scope.regionId;
+  if (scope.marketId) return index.marketsById.get(scope.marketId)?.regionId;
+  return undefined;
+}
+
 /** Markets visible under a scope (all markets, a region's markets, or the one market). */
 export function marketsInScope(index: DataIndex, scope: Scope) {
   if (scope.marketId) {

@@ -1,7 +1,7 @@
 import type { DataIndex } from "../dataIndex";
 import type { Anomaly, ComputedKpis, Market, MetricKey, Period, Scope, Status } from "../types";
 import { scopeKpis } from "./aggregate";
-import { marketsInScope } from "./scope";
+import { marketsInScope, regionOf } from "./scope";
 
 export interface MarketSnapshot {
   market: Market;
@@ -36,7 +36,7 @@ export function marketSnapshot(
 
 /** Snapshots for every market under the scope's region (or all), at `period`. */
 export function marketSnapshots(index: DataIndex, scope: Scope, period: Period): MarketSnapshot[] {
-  const base: Scope = { regionId: scope.regionId };
+  const base: Scope = { regionId: regionOf(index, scope) };
   return marketsInScope(index, base)
     .map((m) => marketSnapshot(index, m.id, period, scope.productId))
     .filter((s): s is MarketSnapshot => s !== null);
@@ -73,7 +73,7 @@ export function statusCounts(index: DataIndex, scope: Scope = {}): StatusCounts 
     needsAttention: 0,
     total: 0,
   };
-  for (const m of marketsInScope(index, { regionId: scope.regionId })) {
+  for (const m of marketsInScope(index, { regionId: regionOf(index, scope) })) {
     counts[m.kpis.status] += 1;
     counts.total += 1;
   }

@@ -146,7 +146,7 @@ export function MarketsMap({
       }
     >
       {geo === null ? (
-        <Skeleton className="h-[360px] w-full" aria-label="Loading map" />
+        <Skeleton className="h-[360px] w-full" role="status" aria-label="Loading map" />
       ) : (
         <svg
           viewBox={`0 0 ${W} ${H}`}

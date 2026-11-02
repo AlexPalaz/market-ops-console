@@ -5,6 +5,7 @@ import { TableIcon, BarChart3Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { ErrorBoundary } from "./ErrorBoundary";
 
 export interface ChartFrameProps {
   title: string;
@@ -17,7 +18,8 @@ export interface ChartFrameProps {
   /**
    * The accessible equivalent: a real <table> (or list) with the same data.
    * When provided, a "View as table" toggle is rendered and the table is also
-   * available to screen readers while the chart is shown.
+   * available to screen readers while the chart is shown. The chart itself is
+   * never aria-hidden: maps and grids carry their own focusable semantics.
    */
   table?: ReactNode;
   /** Short text summary for screen readers, announced with the chart. */
@@ -82,14 +84,20 @@ export function ChartFrame({
       <CardContent className="flex-1">
         {summary ? <p className="sr-only">{summary}</p> : null}
         <div style={{ minHeight }} className="relative">
-          {showTable && table ? (
-            <div className="overflow-auto">{table}</div>
-          ) : (
-            <>
-              <div aria-hidden={table ? true : undefined}>{children}</div>
-              {table ? <div className="sr-only">{table}</div> : null}
-            </>
-          )}
+          <ErrorBoundary label={title}>
+            {showTable && table ? (
+              <div className="overflow-auto">{table}</div>
+            ) : (
+              <>
+                <div>{children}</div>
+                {table ? (
+                  <div className="sr-only [&_[data-slot=table-container]]:overflow-visible">
+                    {table}
+                  </div>
+                ) : null}
+              </>
+            )}
+          </ErrorBoundary>
         </div>
       </CardContent>
     </Card>

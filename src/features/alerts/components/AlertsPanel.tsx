@@ -77,7 +77,10 @@ export function AlertsPanel({
           <BellIcon className="size-4" aria-hidden />
           Alerts
           {hits && triggered.length ? (
-            <Badge variant="destructive" className="ml-1">
+            <Badge
+              variant="outline"
+              className="border-status-off-track/30 bg-status-off-track-soft text-status-off-track ml-1"
+            >
               {triggered.length} triggered · {formatPeriod(period)}
             </Badge>
           ) : null}
@@ -110,7 +113,7 @@ export function AlertsPanel({
       </CardHeader>
       <CardContent className="space-y-2">
         {isPending ? (
-          <div className="space-y-2" aria-label="Loading alerts">
+          <div className="space-y-2" role="status" aria-label="Loading alerts">
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-10 w-full" />
           </div>
