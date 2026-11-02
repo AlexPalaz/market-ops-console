@@ -2,6 +2,8 @@
 
 A market operations console over a fixed, synthetic dataset: a dense analytical dashboard (portfolio → region → market → product) and a streaming assistant that cites the data it used and says when it cannot answer.
 
+**Live:** https://market-ops-console-two.vercel.app · **Source:** https://github.com/AlexPalaz/market-ops-console
+
 Built for the Front-End Engineer take-home. The AI is faked on purpose, exactly as the brief asks: the assistant streams canned answers from `fixtures.json` through the documented SSE contract. Everything the user can verify (numbers, status, evidence) is computed from `data.json`; everything generated is labelled as such.
 
 > ✍️ **Candidate's note.** Blocks marked like this one are where the brief asks for my own reasoning rather than generated text. They are written as prompts to myself and must be replaced before submission.
@@ -297,30 +299,30 @@ What actually happened:
 
 ## Requirements checklist
 
-| Requirement                                         | Where                                                                   |
-| --------------------------------------------------- | ----------------------------------------------------------------------- |
-| React 18+ with TypeScript, App Router, no `any`     | Next 16 / React 19, `strict: true`; ESLint passes with no `any`         |
-| Typed data contract and streaming events            | `domain/types.ts`, `domain/schemas.ts`                                  |
-| Streaming token-by-token, in-progress state, stop   | `features/assistant/streaming`, `useChatStream`, `AnswerMessage`        |
-| Citations tied to markets/products/periods          | `resolveCitation`, `EvidencePanel`, "Show" → `focus()`                  |
-| Confidence and abstention, honest and legible       | `ConfidenceBadge`, abstain/low-confidence callouts                      |
-| AI vs authoritative distinction                     | AI surface vs evidence card; labels; separate containers                |
-| Drill-down without losing context                   | Breadcrumb, URL scope, `scopeBreadcrumbs`                               |
-| Portfolio health at a glance                        | `KpiTiles`, `TopMovers`, `RiskList`                                     |
-| Choropleth with click-to-drill                      | `MarketsMap`                                                            |
-| Radar comparison                                    | `RadarCompareChart`                                                     |
-| Time series actual/forecast/prior-year              | `TimeSeriesChart`                                                       |
-| One advanced chart                                  | `HeatmapChart` (markets × periods, diverging)                           |
-| Executive vs analyst views                          | `ExecView`, `AnalystView`, `view` param                                 |
-| Coordinated views, URL state, back/forward          | `useDashboardSelection`, `state/selection.ts`                           |
-| Accessible charts, no colour-only signals           | `ChartFrame` tables, ARIA on map/grid, status badges, axe in E2E        |
-| Multi-market formatting                             | `domain/format.ts`                                                      |
-| Schema-validated form, optimistic update + rollback | `AlertForm`, `useAlerts`                                                |
-| Design system / tokens                              | `globals.css` `@theme`, shadcn components                               |
-| Server vs client state split                        | See [State ownership](#state-ownership)                                 |
-| Component + integration tests, one E2E happy path   | 91 Vitest tests, 9 Playwright tests                                     |
-| README sections requested by the brief              | This file                                                               |
-| Live deployment                                     | <!-- HUMAN REVIEW: add the Vercel URL after deploying --> _to be added_ |
+| Requirement                                         | Where                                                            |
+| --------------------------------------------------- | ---------------------------------------------------------------- |
+| React 18+ with TypeScript, App Router, no `any`     | Next 16 / React 19, `strict: true`; ESLint passes with no `any`  |
+| Typed data contract and streaming events            | `domain/types.ts`, `domain/schemas.ts`                           |
+| Streaming token-by-token, in-progress state, stop   | `features/assistant/streaming`, `useChatStream`, `AnswerMessage` |
+| Citations tied to markets/products/periods          | `resolveCitation`, `EvidencePanel`, "Show" → `focus()`           |
+| Confidence and abstention, honest and legible       | `ConfidenceBadge`, abstain/low-confidence callouts               |
+| AI vs authoritative distinction                     | AI surface vs evidence card; labels; separate containers         |
+| Drill-down without losing context                   | Breadcrumb, URL scope, `scopeBreadcrumbs`                        |
+| Portfolio health at a glance                        | `KpiTiles`, `TopMovers`, `RiskList`                              |
+| Choropleth with click-to-drill                      | `MarketsMap`                                                     |
+| Radar comparison                                    | `RadarCompareChart`                                              |
+| Time series actual/forecast/prior-year              | `TimeSeriesChart`                                                |
+| One advanced chart                                  | `HeatmapChart` (markets × periods, diverging)                    |
+| Executive vs analyst views                          | `ExecView`, `AnalystView`, `view` param                          |
+| Coordinated views, URL state, back/forward          | `useDashboardSelection`, `state/selection.ts`                    |
+| Accessible charts, no colour-only signals           | `ChartFrame` tables, ARIA on map/grid, status badges, axe in E2E |
+| Multi-market formatting                             | `domain/format.ts`                                               |
+| Schema-validated form, optimistic update + rollback | `AlertForm`, `useAlerts`                                         |
+| Design system / tokens                              | `globals.css` `@theme`, shadcn components                        |
+| Server vs client state split                        | See [State ownership](#state-ownership)                          |
+| Component + integration tests, one E2E happy path   | 91 Vitest tests, 9 Playwright tests                              |
+| README sections requested by the brief              | This file                                                        |
+| Live deployment                                     | https://market-ops-console-two.vercel.app                        |
 
 ## Notes on the dataset
 
