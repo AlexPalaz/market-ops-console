@@ -26,6 +26,8 @@ export interface ChartFrameProps {
   summary?: string;
   /** Fixed height for the chart area so switching views causes no layout shift. */
   minHeight?: number;
+  /** Stretch to the parent's height (grid row) and let the chart fill it. */
+  fill?: boolean;
   className?: string;
 }
 
@@ -42,6 +44,7 @@ export function ChartFrame({
   table,
   summary,
   minHeight = 280,
+  fill = false,
   className,
 }: ChartFrameProps) {
   const [showTable, setShowTable] = useState(false);
@@ -50,7 +53,7 @@ export function ChartFrame({
 
   return (
     <Card
-      className={cn("flex flex-col gap-3", className)}
+      className={cn("flex flex-col gap-3", fill && "h-full", className)}
       role="group"
       aria-labelledby={headingId}
       aria-describedby={description ? descId : undefined}
@@ -81,15 +84,18 @@ export function ChartFrame({
           ) : null}
         </div>
       </CardHeader>
-      <CardContent className="flex-1">
+      <CardContent className={cn("flex-1", fill && "flex min-h-0 flex-col")}>
         {summary ? <p className="sr-only">{summary}</p> : null}
-        <div style={{ minHeight }} className="relative">
+        <div
+          style={{ minHeight }}
+          className={cn("relative", fill && "flex min-h-0 flex-1 flex-col")}
+        >
           <ErrorBoundary label={title}>
             {showTable && table ? (
               <div className="overflow-auto">{table}</div>
             ) : (
               <>
-                <div>{children}</div>
+                <div className={cn(fill && "min-h-0 flex-1")}>{children}</div>
                 {table ? (
                   <div className="sr-only [&_[data-slot=table-container]]:overflow-visible">
                     {table}

@@ -96,10 +96,13 @@ export function TimeSeriesChart({
   scope,
   period,
   onSelectPeriod,
+  fill = false,
 }: {
   scope: Scope;
   period: Period;
   onSelectPeriod: (p: Period) => void;
+  /** Fill the parent row instead of a fixed 300px chart. */
+  fill?: boolean;
 }) {
   const index = useData();
   const reduceMotion = usePrefersReducedMotion();
@@ -123,93 +126,96 @@ export function TimeSeriesChart({
       description={`${label}, monthly revenue over the 24-month horizon. Click a month to select it.`}
       summary={summary}
       minHeight={300}
+      fill={fill}
       table={<SeriesTable data={data} label={label} />}
     >
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart
-          data={data}
-          margin={{ top: 12, right: 12, left: 4, bottom: 0 }}
-          onClick={(state) => {
-            const p = state?.activeLabel;
-            if (typeof p === "string" && index.periodIndex.has(p)) onSelectPeriod(p);
-          }}
-          style={{ cursor: "pointer" }}
-        >
-          <CartesianGrid strokeDasharray="2 4" stroke="var(--border)" vertical={false} />
-          <XAxis
-            dataKey="period"
-            tickFormatter={(p: string) => formatPeriod(p)}
-            tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
-            tickLine={false}
-            axisLine={{ stroke: "var(--border)" }}
-            minTickGap={24}
-          />
-          <YAxis
-            tickFormatter={(v: number) => formatCompact(v)}
-            tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
-            tickLine={false}
-            axisLine={false}
-            width={48}
-          />
-          <Tooltip
-            content={<SeriesTooltip />}
-            cursor={{ stroke: "var(--ring)", strokeDasharray: "3 3" }}
-          />
-          <Legend
-            verticalAlign="top"
-            align="right"
-            iconType="plainline"
-            wrapperStyle={{ fontSize: 12, paddingBottom: 8 }}
-          />
-          <ReferenceLine
-            x={period}
-            stroke="var(--foreground)"
-            strokeOpacity={0.35}
-            strokeWidth={1.5}
-            label={{
-              value: formatPeriod(period),
-              position: "insideTopLeft",
-              fontSize: 10,
-              fill: "var(--muted-foreground)",
+      <div className={fill ? "h-full min-h-[300px]" : undefined}>
+        <ResponsiveContainer width="100%" height={fill ? "100%" : 300}>
+          <LineChart
+            data={data}
+            margin={{ top: 12, right: 12, left: 4, bottom: 0 }}
+            onClick={(state) => {
+              const p = state?.activeLabel;
+              if (typeof p === "string" && index.periodIndex.has(p)) onSelectPeriod(p);
             }}
-          />
-          {SERIES.map((s) => (
-            <Line
-              key={s.key}
-              type="monotone"
-              dataKey={s.key}
-              name={s.label}
-              stroke={s.color}
-              strokeWidth={s.width}
-              strokeDasharray={s.dash}
-              dot={false}
-              activeDot={{ r: 4 }}
-              isAnimationActive={!reduceMotion}
+            style={{ cursor: "pointer" }}
+          >
+            <CartesianGrid strokeDasharray="2 4" stroke="var(--border)" vertical={false} />
+            <XAxis
+              dataKey="period"
+              tickFormatter={(p: string) => formatPeriod(p)}
+              tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+              tickLine={false}
+              axisLine={{ stroke: "var(--border)" }}
+              minTickGap={24}
             />
-          ))}
-          {anomalies.map((a) => {
-            const pt = data.find((d) => d.period === a.period);
-            if (!pt) return null;
-            return (
-              <ReferenceDot
-                key={`${a.market.id}-${a.period}`}
-                x={a.period}
-                y={pt.actual}
-                r={6}
-                fill="var(--status-off-track)"
-                stroke="var(--background)"
-                strokeWidth={2}
-                label={{
-                  value: a.type,
-                  position: "bottom",
-                  fontSize: 10,
-                  fill: "var(--status-off-track)",
-                }}
+            <YAxis
+              tickFormatter={(v: number) => formatCompact(v)}
+              tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+              tickLine={false}
+              axisLine={false}
+              width={48}
+            />
+            <Tooltip
+              content={<SeriesTooltip />}
+              cursor={{ stroke: "var(--ring)", strokeDasharray: "3 3" }}
+            />
+            <Legend
+              verticalAlign="top"
+              align="right"
+              iconType="plainline"
+              wrapperStyle={{ fontSize: 12, paddingBottom: 8 }}
+            />
+            <ReferenceLine
+              x={period}
+              stroke="var(--foreground)"
+              strokeOpacity={0.35}
+              strokeWidth={1.5}
+              label={{
+                value: formatPeriod(period),
+                position: "insideTopLeft",
+                fontSize: 10,
+                fill: "var(--muted-foreground)",
+              }}
+            />
+            {SERIES.map((s) => (
+              <Line
+                key={s.key}
+                type="monotone"
+                dataKey={s.key}
+                name={s.label}
+                stroke={s.color}
+                strokeWidth={s.width}
+                strokeDasharray={s.dash}
+                dot={false}
+                activeDot={{ r: 4 }}
+                isAnimationActive={!reduceMotion}
               />
-            );
-          })}
-        </LineChart>
-      </ResponsiveContainer>
+            ))}
+            {anomalies.map((a) => {
+              const pt = data.find((d) => d.period === a.period);
+              if (!pt) return null;
+              return (
+                <ReferenceDot
+                  key={`${a.market.id}-${a.period}`}
+                  x={a.period}
+                  y={pt.actual}
+                  r={6}
+                  fill="var(--status-off-track)"
+                  stroke="var(--background)"
+                  strokeWidth={2}
+                  label={{
+                    value: a.type,
+                    position: "bottom",
+                    fontSize: 10,
+                    fill: "var(--status-off-track)",
+                  }}
+                />
+              );
+            })}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </ChartFrame>
   );
 }
