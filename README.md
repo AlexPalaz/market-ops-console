@@ -25,6 +25,8 @@ Built for the Front-End Engineer take-home. The AI is faked on purpose, exactly 
 - [What I'd do next](#what-id-do-next)
 - [Requirements checklist](#requirements-checklist)
 - [Notes on the dataset](#notes-on-the-dataset)
+- [Screenshots](#screenshots)
+- [Video walkthrough](#video-walkthrough)
 
 ## What it does
 
@@ -227,7 +229,7 @@ Not covered yet: a screen-reader walkthrough with VoiceOver/NVDA (only automated
 | Unit (40)           | Vitest                             | Dataset and contract schemas, aggregation (ratios, zero denominators), movers, time series, heat map, radar normalisation, citation resolution, scope rules, formatters, URL parse/serialise, SSE parser (split/merged/CRLF/malformed), stream client (abort, incomplete, HTTP), chat store (stale ids), alert schema and evaluation |
 | Component (c. 30)   | Vitest + Testing Library           | ChartFrame toggle and SR table, KPI tiles, markets table sort/filter/select, selection hook through the nuqs testing adapter, answer states (streaming, stopped, abstain, low confidence, error), plain-text rendering, alert form validation and coercion                                                                           |
 | Integration (c. 20) | Vitest + Testing Library           | Assistant panel with a mocked SSE fetch (stream, stop keeps partial, error event, HTTP failure), citation → URL → dashboard scope, optimistic create/toggle with rollback and toasts                                                                                                                                                 |
-| E2E (9)             | Playwright on the production build | Drill → ask → stream → citation → dashboard → back; stop/abstain/error; deep link, heat-map and map keyboard; alert validation + rollback; phone width with the assistant sheet; axe audits; reduced motion                                                                                                                          |
+| E2E (10)            | Playwright on the production build | Drill → ask → stream → citation → dashboard → back; stop/abstain/error; deep link, heat-map and map keyboard; alert validation + rollback; phone width with the assistant sheet; axe audits; reduced motion                                                                                                                          |
 
 Run: `npm test` (91 tests, ~3 s) and `npm run e2e` (~20 s after the build).
 
@@ -365,6 +367,18 @@ Two things worth knowing if you read the numbers closely:
 | ![Abstain and error](docs/screenshots/04-assistant-abstain-error.png) | ![Alert form](docs/screenshots/05-alert-form-validation.png)      |
 | ![Mobile](docs/screenshots/06-mobile-executive.png)                   | ![Mobile assistant](docs/screenshots/07-mobile-assistant.png)     |
 | ![Dark analyst](docs/screenshots/08-dark-analyst.png)                 |                                                                   |
+
+## Video walkthrough
+
+[**docs/walkthrough/walkthrough.mp4**](docs/walkthrough/walkthrough.mp4) (3 min 52 s, 1080p) walks through both views, the assistant and the alerts, narrated by the candidate, with the narration also burned in as captions. [`walkthrough.srt`](docs/walkthrough/walkthrough.srt) is the narration as subtitles.
+
+The video is generated, not screen-recorded: `scripts/walkthrough/record.mjs` drives the production build with Playwright, captures frames through the DevTools screencast and injects the captions and a cursor into the page; `scripts/walkthrough/encode.mjs` turns the frames into the MP4 and muxes the voice track.
+
+```bash
+npm run build && npm run start -- -p 3200
+node scripts/walkthrough/record.mjs http://localhost:3200 /tmp/walkthrough
+node scripts/walkthrough/encode.mjs /tmp/walkthrough docs/walkthrough/walkthrough.mp4 [voice.m4a]
+```
 
 ## License
 

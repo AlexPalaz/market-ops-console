@@ -1,0 +1,75 @@
+1
+00:00:01,179 --> 00:00:13,444
+Hi everyone, and welcome to Market Ops Console. It's a dashboard designed to help sales teams track performance, using the data from the provided dataset.
+
+2
+00:00:13,445 --> 00:00:27,074
+Let's start with the executive view. This gives us a quick overview of the entire portfolio, with four key metrics: revenue, growth, forecast performance, and markets at risk.
+
+3
+00:00:27,074 --> 00:00:40,702
+Here we have the map. The darker the colour, the higher the revenue. Each country is interactive, and you can navigate using a mouse, keyboard, or screen reader.
+
+4
+00:00:40,702 --> 00:00:49,331
+Let's select Germany. The map zooms into Europe, and the entire dashboard updates to show Germany's data.
+
+5
+00:00:49,331 --> 00:01:01,143
+Our selection is also reflected in the URL, which means we can share this exact view or use the browser's back button to navigate.
+
+6
+00:01:01,143 --> 00:01:15,226
+Moving on to the time-series chart, we can compare actual revenue against the forecast and the previous year. The selected month is highlighted, and anomalies are marked in orange.
+
+7
+00:01:15,226 --> 00:01:29,308
+On the right, we have the markets that need attention and the biggest movers, all based on the same dataset. The product table lets us explore the details further.
+
+8
+00:01:29,308 --> 00:01:39,754
+Now let's look at the AI assistant. It's powered by a mock backend and streams responses using the provided API contract.
+
+9
+00:01:39,754 --> 00:01:51,110
+As you can see, the response appears progressively. We can stop the generation at any point, and the content already received remains visible.
+
+10
+00:01:51,111 --> 00:02:03,376
+Once the response is complete, we can explore the supporting evidence. Each source is validated against the dataset, and we also display a confidence indicator.
+
+11
+00:02:03,376 --> 00:02:14,733
+By clicking Show, we're taken directly to the relevant market and period. This connects the assistant's insights to the actual data behind them.
+
+12
+00:02:14,733 --> 00:02:25,181
+Let's switch to the analyst view. Here we get more detailed information, including this heatmap showing market performance across different months.
+
+13
+00:02:25,181 --> 00:02:37,447
+By default, the heatmap shows year-over-year growth: red cells are below last year, green cells are above. We can also switch to the forecast view.
+
+14
+00:02:37,447 --> 00:02:51,076
+When I hover over a cell, the corresponding month is highlighted in the time-series chart. I can also navigate with the arrow keys and press Enter to select.
+
+15
+00:02:51,077 --> 00:03:04,706
+Next is the comparison view, where we can compare regions or markets using a radar chart. Each metric is normalized to a scale from zero to one hundred.
+
+16
+00:03:04,706 --> 00:03:16,970
+Finally, we have the alert configuration. The form validates our inputs, and when we create a rule, it appears immediately while the server saves it.
+
+17
+00:03:16,970 --> 00:03:25,599
+If the request fails, the change is automatically rolled back, and the user receives a clear explanation.
+
+18
+00:03:25,599 --> 00:03:36,955
+Every chart also provides an accessible table alternative. Both light and dark themes have been checked for accessibility, including contrast and keyboard navigation.
+
+19
+00:03:36,955 --> 00:03:50,720
+To wrap things up, the project includes ninety-one unit tests, ten end-to-end tests, an automated CI pipeline, and a perfect Lighthouse score. Thanks for watching!
